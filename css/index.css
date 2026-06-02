@@ -1,0 +1,38 @@
+/* Specific styles for About page */
+.intro-section {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.intro-image img {
+  max-width: 250px;
+  border-radius: 8px;
+  height: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.intro-text h2 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-family: 'Fraunces', serif;
+  font-size: 4rem;
+}
+
+.name-unicode {
+  font-size: 1.1rem;
+  color: #666;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.centered-content {
+  text-align: center;
+}
+
+hr {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid #eaeaea;
+}
