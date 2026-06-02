@@ -1,1 +1,68 @@
 /* Specific styles for Experience page */
+
+.timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 2rem auto;
+}
+
+.timeline::after {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #003366;
+    z-index: 1;
+}
+
+.timeline-job {
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.job-org {
+    margin: 0 0 1rem 30px;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.timeline-node {
+    position: relative;
+    margin-left: 30px;
+    padding-bottom: 1.5rem;
+}
+
+.timeline-node::before {
+    content: '';
+    position: absolute;
+    left: -27px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #003366;
+    border: 2px solid #fff;
+    z-index: 3;
+}
+
+.node-time {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+}
+
+.node-content h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: #444;
+}
+
+.node-content p {
+    margin: 0;
+    color: #555;
+    line-height: 1.5;
+}

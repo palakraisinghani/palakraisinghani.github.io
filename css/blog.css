@@ -1,1 +1,91 @@
 /* Specific styles for Blog page */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&display=swap');
+
+.blog-page-title {
+    font-family: 'Fraunces', serif;
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+    text-align: center;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #ccc;
+    margin: 1rem 0;
+}
+
+#tag-filters {
+    margin: 1rem 0;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tag-btn {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    color: #333;
+}
+
+.tag-btn:hover {
+    background-color: #e2e6ea;
+}
+
+.tag-btn.active {
+    background-color: #003366;
+    color: white;
+    border-color: #003366;
+}
+
+.blog-sect {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+}
+
+.blog-sect h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+}
+
+.blog-sect h3 a {
+    color: #333;
+    text-decoration: none;
+}
+
+.blog-sect h3 a:hover {
+    color: #003366;
+    text-decoration: underline;
+}
+
+.blog-meta {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.blog-date {
+    margin-right: 1rem;
+    font-style: italic;
+}
+
+.blog-tags-display {
+    color: #003366;
+    font-weight: 500;
+}
+
+.blog-desc {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.hidden {
+    display: none !important;
+}
