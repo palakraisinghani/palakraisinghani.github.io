@@ -65,6 +65,17 @@ hr {
     text-decoration: underline;
 }
 
+.external-link-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 6px;
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+    opacity: 0.8;
+    flex-shrink: 0;
+}
+
 .blog-meta {
     font-size: 0.85rem;
     color: #666;
