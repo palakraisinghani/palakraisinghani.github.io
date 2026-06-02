@@ -36,3 +36,22 @@ hr {
   border: 0;
   border-top: 1px solid #eaeaea;
 }
+
+.box {
+  border: 1px solid #eaeaea;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  margin: 1rem auto;
+  max-width: 600px;
+  text-align: left;
+}
+
+.box ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.box li {
+  margin-bottom: 0.5rem;
+}
