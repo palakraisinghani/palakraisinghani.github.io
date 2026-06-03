@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <nav class="header-center">
             <a href="${basePath}index.html">About</a>
-            <a href="${basePath}Research.html">Research</a>
+            <a href="${basePath}research.html">Research</a>
             <a href="${basePath}projects.html">Projects</a>
             <a href="${basePath}experience.html">Experience</a>
             <a href="${basePath}blog.html">Blog</a>
