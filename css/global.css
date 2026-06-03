@@ -73,3 +73,19 @@ main {
     max-width: 800px;
     margin: 0 auto;
 }
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&display=swap");
+
+.page-title {
+    font-family: "Fraunces", serif;
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+    text-align: center;
+}
+hr {
+    border: 0;
+    height: 1px;
+    background: #ccc;
+    margin: 1rem 0;
+}

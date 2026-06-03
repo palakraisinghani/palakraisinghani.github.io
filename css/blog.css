@@ -9,13 +9,6 @@
     text-align: center;
 }
 
-hr {
-    border: 0;
-    height: 1px;
-    background: #ccc;
-    margin: 1rem 0;
-}
-
 #tag-filters {
     margin: 1rem 0;
     display: flex;
