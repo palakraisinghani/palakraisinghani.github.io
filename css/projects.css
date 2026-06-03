@@ -1,0 +1,49 @@
+/* Specific styles for Projects page */
+
+.project-tabs {
+    display: flex;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid #003366;
+    background-color: transparent;
+    color: #003366;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    background-color: #f0f4f8;
+}
+
+.tab-btn.active {
+    background-color: #003366;
+    color: white;
+}
+
+#project-content {
+    min-height: 250px;
+    padding: 1rem 0;
+}
+
+.project-list h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.project-list ul {
+    line-height: 1.6;
+    padding-left: 1.5rem;
+}
+
+.project-list li {
+    margin-bottom: 0.8rem;
+}

@@ -1,22 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Publications - Palak</title>
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/publications.css">
-</head>
-<body>
+document.addEventListener("DOMContentLoaded", () => {
+    // Determine the base path for links based on the current URL
+    // If we are in a subdirectory like 'blog/', we need to prepend '../' to root links.
+    const pathDepth = window.location.pathname.split('/').length - 2; // approximation
+    // A better way: just check if we're in the 'blog' folder for this specific site
+    const inSubdir = window.location.pathname.includes('/blog/') && !window.location.pathname.endsWith('/blog.html');
+    const basePath = inSubdir ? '../' : '';
+
+    const headerHTML = `
     <header>
         <div class="header-left">
-            <h1>Palak</h1>
+            <h1>Palak Raisinghani</h1>
         </div>
         <nav class="header-center">
-            <a href="index.html">About</a>
-            <a href="publications.html">Publications</a>
-            <a href="experience.html">Experience</a>
-            <a href="blog.html">Blog</a>
+            <a href="${basePath}index.html">About</a>
+            <a href="${basePath}Research.html">Research</a>
+            <a href="${basePath}projects.html">Projects</a>
+            <a href="${basePath}publications.html">Publications</a>
+            <a href="${basePath}experience.html">Experience</a>
+            <a href="${basePath}blog.html">Blog</a>
         </nav>
         <div class="header-right">
             <a href="https://www.linkedin.com/in/palak-raisinghani-656bab321/" target="_blank" class="social-link" aria-label="LinkedIn">
@@ -27,12 +28,21 @@
             </a>
         </div>
     </header>
-    <main>
-        <h2>Publications</h2>
-        <ul>
-            <li>Coming soon...</li>
-        </ul>
-    </main>
-    <script src="js/main.js"></script>
-</body>
-</html>
+    `;
+
+    const footerHTML = `
+    <footer style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid #eaeaea; color: #666; font-size: 0.9rem;">
+        <p>&copy; ${new Date().getFullYear()} Palak Raisinghani. All rights reserved.</p>
+    </footer>
+    `;
+
+    const headerEl = document.getElementById("global-header");
+    if (headerEl) {
+        headerEl.innerHTML = headerHTML;
+    }
+
+    const footerEl = document.getElementById("global-footer");
+    if (footerEl) {
+        footerEl.innerHTML = footerHTML;
+    }
+});
