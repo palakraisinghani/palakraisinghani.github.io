@@ -2,7 +2,8 @@
 
 .timeline {
     position: relative;
-    max-width: 800px;
+    max-width: 12
+    00px;
     margin: 2rem auto;
 }
 
@@ -59,7 +60,7 @@
 .node-content h4 {
     margin: 0 0 0.5rem 0;
     font-size: 1.1rem;
-    color: #444;
+    color: #3a3333;
 }
 
 .node-content p {
