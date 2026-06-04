@@ -35,16 +35,22 @@
     padding: 1rem 0;
 }
 
-.project-list h3 {
-    margin-top: 0;
-    color: #333;
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
 }
 
-.project-list ul {
-    
-    padding-left: 1.5rem;
+.project-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    background-color: #f8fafc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.project-list li {
-    margin-bottom: 0.8rem;
+@media (max-width: 768px) {
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
 }
