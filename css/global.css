@@ -5,6 +5,15 @@ body {
     color: #333;
 }
 
+a {
+    color: #003366;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
 header {
     display: flex;
     justify-content: space-between;
@@ -39,17 +48,13 @@ header h1 {
 
 nav a {
     margin-left: 20px;
-    text-decoration: none;
-    color: #003366;
     font-weight: 500;
 }
 
 .social-link {
     display: inline-flex;
     align-items: center;
-    color: #003366;
     margin-left: 20px;
-    text-decoration: none;
 }
 
 .social-icon {
@@ -60,12 +65,7 @@ nav a {
 }
 
 .social-link:hover {
-    text-decoration: none;
     opacity: 0.8;
-}
-
-nav a:hover {
-    text-decoration: underline;
 }
 
 main {
