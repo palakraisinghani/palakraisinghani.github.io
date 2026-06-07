@@ -81,3 +81,46 @@
 .hidden {
     display: none !important;
 }
+
+/* Individual blog post styling */
+.blog-post-header {
+    margin-bottom: 2rem;
+}
+
+.blog-nav-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    border-top: 1px solid #e6e6e6;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.blog-nav-prev, .blog-nav-next {
+    display: flex;
+    flex-direction: column;
+    max-width: 45%;
+}
+
+.blog-nav-next {
+    text-align: right;
+    align-items: flex-end;
+}
+
+.blog-nav-label {
+    font-size: 0.85rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+}
+
+.blog-nav-container a {
+    font-weight: 500;
+    color: #003366;
+    text-decoration: none;
+}
+
+.blog-nav-container a:hover {
+    text-decoration: underline;
+}
