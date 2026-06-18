@@ -33,6 +33,31 @@
 }
 
 
+.awards-section {
+  max-width: 600px;
+  margin: 0 auto 20px auto;
+}
+
+/* Headings within the class */
+.awards-section h3, 
+.awards-section h4 {
+  text-align: center;
+}
+
+/* Parent lists: left-aligned and square bullets */
+.awards-section ul {
+  text-align: left;
+  list-style-type: square; 
+  padding-left: 20px; /* Optional: gives a nice breathing room indentation */
+}
+
+/* Sub-lists: filled circle bullets */
+.awards-section ul ul {
+  list-style-type: disc; 
+  margin-top: 5px;
+}
+
+
 
 .box {
   border: 1px solid #eaeaea;
