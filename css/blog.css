@@ -18,6 +18,9 @@
     transition: all 0.2s ease;
     color: #333;
 }
+.centered-content {
+  text-align: center;
+}
 
 .tag-btn:hover {
     background-color: #e2e6ea;
