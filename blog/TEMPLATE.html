@@ -1,0 +1,41 @@
+<!--
+    TEMPLATE FOR A NEW BLOG POST
+    ============================
+    1. Copy this file into blog/ and rename it (e.g. blog/my-new-post.html).
+    2. Add an entry for it to js/blog-data.js (id, title, url, date, tags, desc).
+       Its position in that list controls its place in the blog listing and
+       its automatic Previous/Next Blog links below - you don't need to edit
+       any nav links by hand, here or on any other post.
+    3. Set data-blog-id below to the same "id" you used in blog-data.js.
+    4. Replace the placeholder <title> and write your post content in <main>.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Title - Palak</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/blog.css">
+</head>
+<body>
+    <div id="global-header"></div>
+    <main>
+        <!-- Title, date and tags are filled in automatically from js/blog-data.js -->
+        <div class="blog-post-header" data-blog-id="REPLACE_WITH_ID"></div>
+
+        <p>
+            Write your blog content here, as one or more paragraphs.
+        </p>
+
+        <!-- Previous/Next Blog links are filled in automatically based on
+             this post's position in js/blog-data.js -->
+        <div id="blog-end"></div>
+    </main>
+    <div id="global-footer"></div>
+    <script src="../js/components.js"></script>
+    <script src="../js/blog-data.js"></script>
+    <script src="../js/blog.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+</html>
