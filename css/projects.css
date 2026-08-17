@@ -75,6 +75,20 @@
     font-style: italic;
 }
 
+.project-group {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.project-group-label {
+    font-weight: 600;
+    color: #003366;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    margin-right: 0.4rem;
+}
+
 .project-description {
     font-size: 1rem;
     color: #334155;
