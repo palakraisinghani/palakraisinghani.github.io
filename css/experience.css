@@ -2,8 +2,7 @@
 
 .timeline {
     position: relative;
-    max-width: 12
-    00px;
+    max-width: 1200px;
     margin: 2rem auto;
 }
 
@@ -14,7 +13,7 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background-color: #003366;
+    background-color: var(--mg-mauve);
     z-index: 1;
 }
 
@@ -26,7 +25,7 @@
 
 .job-org {
     margin: 0 0 1rem 30px;
-    color: #333;
+    color: var(--mg-ink);
     font-size: 1.5rem;
 }
 
@@ -45,14 +44,15 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: #003366;
-    border: 2px solid #fff;
+    background-color: var(--mg-ink);
+    border: 2px solid var(--mg-cream);
     z-index: 3;
 }
 
 .node-time {
-    font-size: 0.9rem;
-    color: #666;
+    font-family: var(--mg-mono);
+    font-size: 0.85rem;
+    color: var(--mg-ink-faint);
     margin-bottom: 0.3rem;
     font-weight: 600;
 }
@@ -60,7 +60,7 @@
 .node-content h4 {
     margin: 0 0 0.5rem 0;
     font-size: 1.1rem;
-    color: #3a3333;
+    color: var(--mg-ink);
 }
 
 .node-content p {

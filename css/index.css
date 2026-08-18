@@ -1,79 +1,359 @@
-/* Specific styles for About page */
-.intro-section {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
+/* Specific styles for the About page — the "Marginalia" sidebar layout.
+   Shared chrome (topbar, footer, palette, type tokens, fade keyframes)
+   lives in global.css; this file is the two-column shell and content
+   treatment unique to this page. */
+
+.mg-shell {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
+/* ---------------------------------------------------------------- sidebar */
 
-.intro-image img {
-  max-width: 250px;
-  border-radius: 8px;
-  height: auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.mg-sidebar {
+    position: relative;
+    background: var(--mg-sidebar);
+    border-right: 1px solid var(--mg-line);
+    padding: 3rem 2.5rem;
 }
 
-.intro-text h2 {
-  margin-top: 0;
-  margin-bottom: 5px;
-  
-  font-size: 4rem;
+.mg-sidebar-inner {
+    position: sticky;
+    top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.name-unicode {
-  font-size: 1.1rem;
-  color: #666;
-  margin-top: 0;
-  margin-bottom: 15px;
+.mg-sidebar-inner > * {
+    animation: mg-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.centered-content {
-  text-align: center;
+.mg-sidebar-inner > *:nth-child(1) { animation-delay: 0.05s; }
+.mg-sidebar-inner > *:nth-child(2) { animation-delay: 0.15s; }
+.mg-sidebar-inner > *:nth-child(3) { animation-delay: 0.25s; }
+.mg-sidebar-inner > *:nth-child(4) { animation-delay: 0.35s; }
+.mg-sidebar-inner > *:nth-child(5) { animation-delay: 0.45s; }
+
+/* rectangular portrait, colour-framed rather than illustrated */
+
+.mg-portrait-frame {
+    position: relative;
+    width: 100%;
+    max-width: 260px;
+    margin-bottom: 1.75rem;
+    padding: 10px;
+    background: var(--mg-mauve);
+    border-radius: 4px;
 }
 
-
-.awards-section {
-  max-width: 600px;
-  margin: 0 auto 20px auto;
+.mg-portrait {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 2px;
+    box-shadow: 0 10px 24px var(--mg-shadow);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
 }
 
-/* Headings within the class */
-.awards-section h3, 
-.awards-section h4 {
-  text-align: center;
+.mg-portrait-frame:hover .mg-portrait {
+    transform: scale(1.03);
+    box-shadow: 0 14px 30px var(--mg-shadow);
 }
 
-/* Parent lists: left-aligned and square bullets */
-.awards-section ul {
-  text-align: left;
-  list-style-type: square; 
-  padding-left: 20px; /* Optional: gives a nice breathing room indentation */
+.mg-name-unicode {
+    font-size: 0.85rem;
+    color: var(--mg-ink-faint);
+    margin: 0 0 1.5rem 0;
 }
 
-/* Sub-lists: filled circle bullets */
-.awards-section ul ul {
-  list-style-type: disc; 
-  margin-top: 5px;
+.mg-role {
+    font-size: 0.92rem;
+    color: var(--mg-slate);
+    line-height: 1.5;
+    margin: 0 0 1rem 0;
 }
 
-
-
-.box {
-  border: 1px solid #eaeaea;
-  padding: 1.5rem;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-  margin: 1rem auto;
-  max-width: 600px;
-  text-align: left;
+.mg-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mg-mono);
+    font-size: 0.78rem;
+    color: var(--mg-slate);
+    margin: 0 0 2.5rem 0;
 }
 
-.box ul {
-  margin: 0;
-  padding-left: 1.5rem;
+.mg-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--mg-slate);
+    box-shadow: 0 0 0 3px rgba(65, 94, 114, 0.25);
+    flex: 0 0 auto;
+    animation: mg-pulse 2.6s ease-in-out infinite;
 }
 
-.box li {
-  margin-bottom: 0.5rem;
+@keyframes mg-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(65, 94, 114, 0.25); }
+    50% { box-shadow: 0 0 0 6px rgba(65, 94, 114, 0.1); }
+}
+
+/* the sidebar's centerpiece */
+
+.mg-motto {
+    margin-top: 0.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--mg-line);
+    width: 100%;
+}
+
+.mg-motto-label {
+    font-family: var(--mg-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mg-ink-faint);
+    margin: 0 0 0.6rem 0;
+}
+
+.mg-motto-text {
+    font-family: var(--mg-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.35rem;
+    line-height: 1.4;
+    color: var(--mg-ink);
+    margin: 0;
+}
+
+/* ------------------------------------------------------------------ main */
+
+.mg-shell .mg-main {
+    position: relative;
+    padding: 5rem 4rem 4rem 4rem;
+    max-width: 720px;
+    margin: 0;
+}
+
+.mg-lede {
+    font-family: var(--mg-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    color: var(--mg-ink);
+    margin: 0 0 5rem 0;
+    animation: mg-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+}
+
+.mg-section {
+    position: relative;
+    margin-bottom: 4.5rem;
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--mg-line);
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s ease;
+}
+
+.mg-section.mg-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mg-section:hover {
+    border-left-color: var(--mg-mauve);
+}
+
+.mg-section h2 {
+    font-size: 2rem;
+    margin: 0 0 1.2rem 0;
+}
+
+.mg-section h3 {
+    font-size: 1.15rem;
+    margin: 0 0 0.8rem 0;
+}
+
+.mg-section p {
+    color: var(--mg-slate);
+    margin: 0 0 1.1rem 0;
+}
+
+.mg-section p:last-child {
+    margin-bottom: 0;
+}
+
+.mg-pullquote {
+    font-family: var(--mg-serif);
+    font-style: italic;
+    font-size: 1.2rem;
+    line-height: 1.55;
+    color: var(--mg-ink);
+    background: var(--mg-mauve-wash-soft);
+    border-left: 3px solid var(--mg-ink);
+    border-radius: 0 8px 8px 0;
+    padding: 1.1rem 1.4rem;
+    margin-top: 1.6rem !important;
+}
+
+.mg-chip {
+    display: inline-block;
+    font-family: var(--mg-mono);
+    font-size: 0.82rem;
+    color: var(--mg-ink);
+    background: var(--mg-mauve-wash);
+    border-radius: 4px;
+    padding: 0.05rem 0.5rem;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.mg-chip:hover {
+    background: var(--mg-mauve);
+    transform: translateY(-2px);
+}
+
+/* -------------------------------------------------------------- awards */
+
+.mg-award-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+}
+
+.mg-award-card {
+    background: var(--mg-card);
+    border-top: 3px solid var(--mg-mauve);
+    border-radius: 0 0 10px 10px;
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+
+.mg-award-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px var(--mg-shadow);
+}
+
+.mg-award-card ul {
+    list-style: none;
+    margin: 0 0 1.2rem 0;
+    padding: 0;
+}
+
+.mg-award-card ul:last-child {
+    margin-bottom: 0;
+}
+
+.mg-award-card li {
+    position: relative;
+    padding-left: 1.1rem;
+    color: var(--mg-slate);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    margin-bottom: 0.6rem;
+}
+
+.mg-award-card li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--mg-ink);
+}
+
+.mg-award-label {
+    font-family: var(--mg-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mg-ink-faint);
+    margin: 0 0 0.6rem 0;
+}
+
+/* ---------------------------------------------------------- cursor glow */
+/* pure colour, no illustration: a soft blend of the two background tones
+   that trails the pointer across the page — About page only */
+
+.mg-cursor-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 380px;
+    height: 380px;
+    margin: -190px 0 0 -190px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(197, 176, 205, 0.4) 0%,
+        rgba(65, 94, 114, 0.08) 55%,
+        rgba(65, 94, 114, 0) 75%
+    );
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+}
+
+/* --------------------------------------------------------------- mobile */
+
+@media (max-width: 860px) {
+    .mg-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .mg-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--mg-line);
+        padding: 2.5rem 1.75rem;
+    }
+
+    .mg-sidebar-inner {
+        position: static;
+    }
+
+    .mg-shell .mg-main {
+        padding: 3rem 1.75rem;
+    }
+
+    .mg-lede {
+        font-size: 1.3rem;
+        margin-bottom: 3rem;
+    }
+
+    .mg-award-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .mg-cursor-glow {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mg-section,
+    .mg-sidebar-inner > *,
+    .mg-lede {
+        animation: none;
+        transition: none;
+        transform: none;
+        opacity: 1;
+    }
+
+    .mg-dot,
+    .mg-portrait,
+    .mg-chip,
+    .mg-award-card {
+        animation: none;
+        transition: none;
+    }
 }
