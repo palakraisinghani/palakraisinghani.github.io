@@ -11,12 +11,14 @@ snapshot — the real pages no longer depend on them.
 
 ## Core idea
 
-A calm, editorial personal site: warm neutral backgrounds, two ink tones for
-text, a serif for headings, a clean sans for prose, monospace reserved for
-small structural labels (nav index, dates, tags, footer). The visual
-language is meant to read as someone who thinks in both systems (clean
-structure, consistent rules, restrained motion) and humanities (serif
-display type, warm paper-like tones, an italic pull-quote voice).
+A calm, editorial personal site: a light neutral background, a green
+gradient for text and structure, a serif for headings, a clean sans for
+prose, monospace reserved for small structural labels (nav index, dates,
+tags, footer). The visual language is meant to read as someone who thinks
+in both systems (clean structure, consistent rules, restrained motion) and
+humanities (serif display type, an italic pull-quote voice) — now expressed
+through a natural, growth-toned green palette rather than the original
+warm cream/mauve pairing.
 
 The name "Marginalia" — the handwritten notes scholars leave in the margins
 of a book — is the bridge: literary content, but organized with a
@@ -24,14 +26,30 @@ technical/spec-like structure and rhythm.
 
 ## Color
 
+Palette source: a user-supplied four-swatch green gradient
+(`#063B00` → `#266210` → `#90B800` → `#E1E100`, dark to bright). The two
+darkest greens became the text tones (dark greens read as near-black at
+paragraph size, so contrast against a light background is unaffected); the
+two brightest became the panel/accent tones. The base background is a
+derived near-white tint in the same hue family — using the palette's
+brightest swatches at full strength behind body text would be too intense,
+so "similar shades" fills that gap.
+
 | Token | Value | Role |
 |---|---|---|
-| `--mg-cream` | `#f7f4ed` | base page background |
-| `--mg-mauve` | `#c5b0cd` | secondary background / borders / accents |
-| `--mg-panel` | `#eef8dc` | topbar background |
-| `--mg-sidebar` | `#cdd3c0` | About-page sidebar background |
-| `--mg-slate` | `#415e72` | body text, secondary links |
-| `--mg-ink` | `#17313e` | headings, primary emphasis, active states |
+| `--mg-cream` | `#f7f9e8` | base page background (derived pale tint, not a literal swatch) |
+| `--mg-mauve` | `#90b800` | secondary background / borders / accents (chips, card borders, portrait mat) |
+| `--mg-panel` | `#e1e100` | topbar background |
+| `--mg-sidebar` | `#90b800` | About-page sidebar background |
+| `--mg-slate` | `#266210` | body text, secondary links |
+| `--mg-ink` | `#063b00` | headings, primary emphasis, active states |
+
+Earlier iterations of this palette (a cream/mauve pairing, then a
+teal/olive/plum trio of candidate header+sidebar pairs) are superseded by
+this green theme — the naming (`--mg-cream`, `--mg-mauve`, `--mg-slate`,
+`--mg-ink`, `--mg-panel`, `--mg-sidebar`) stayed stable across all of it, so
+only the `:root` values in `css/global.css` needed to change; every page
+that consumes these tokens re-themed automatically.
 
 Everything else (`--mg-mauve-wash`, `--mg-line`, `--mg-shadow`, `--mg-card`,
 `--mg-ink-faint`) is a derived tint of these five — rgba blends, not new

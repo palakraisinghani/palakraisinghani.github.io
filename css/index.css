@@ -95,14 +95,14 @@
     height: 7px;
     border-radius: 50%;
     background: var(--mg-slate);
-    box-shadow: 0 0 0 3px rgba(65, 94, 114, 0.25);
+    box-shadow: 0 0 0 3px rgba(38, 98, 16, 0.25);
     flex: 0 0 auto;
     animation: mg-pulse 2.6s ease-in-out infinite;
 }
 
 @keyframes mg-pulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(65, 94, 114, 0.25); }
-    50% { box-shadow: 0 0 0 6px rgba(65, 94, 114, 0.1); }
+    0%, 100% { box-shadow: 0 0 0 3px rgba(38, 98, 16, 0.25); }
+    50% { box-shadow: 0 0 0 6px rgba(38, 98, 16, 0.1); }
 }
 
 /* the sidebar's centerpiece */
@@ -294,9 +294,9 @@
     border-radius: 50%;
     background: radial-gradient(
         circle,
-        rgba(197, 176, 205, 0.4) 0%,
-        rgba(65, 94, 114, 0.08) 55%,
-        rgba(65, 94, 114, 0) 75%
+        rgba(144, 184, 0, 0.4) 0%,
+        rgba(38, 98, 16, 0.08) 55%,
+        rgba(38, 98, 16, 0) 75%
     );
     pointer-events: none;
     z-index: 0;

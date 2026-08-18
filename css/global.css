@@ -1,6 +1,6 @@
 /* ==========================================================================
    Site-wide theme — "Marginalia"
-   Palette: #f3e2d4 + #c5b0cd (backgrounds), #415e72 + #17313e (text).
+   Palette: a dark-to-bright green gradient — #063B00, #266210, #90B800, #E1E100.
    Fraunces for headings/logo-adjacent display, Inter for body prose,
    JetBrains Mono for small structural labels, Lavishly Yours for the
    wordmark. See Design.md for the full rationale.
@@ -12,19 +12,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Lavishly+Yours&display=swap");
 
 :root {
-    --mg-cream: #fdfbf7;
-    --mg-mauve: #c5b0cd;
-    --mg-slate: #415e72;
-    --mg-ink: #17313e;
+    --mg-cream: #f7f9e8;
+    --mg-mauve: #90b800;
+    --mg-slate: #266210;
+    --mg-ink: #063b00;
 
-    --mg-panel: #e6d3de;
-    --mg-sidebar: #c8dfd8;
+    --mg-panel: #fff449;
+    --mg-sidebar:#c6d870;
     --mg-card: rgba(255, 255, 255, 0.42);
-    --mg-mauve-wash: rgba(197, 176, 205, 0.32);
-    --mg-mauve-wash-soft: rgba(197, 176, 205, 0.18);
-    --mg-ink-faint: rgba(23, 49, 62, 0.55);
-    --mg-line: rgba(23, 49, 62, 0.16);
-    --mg-shadow: rgba(23, 49, 62, 0.16);
+    --mg-mauve-wash: rgba(144, 184, 0, 0.32);
+    --mg-mauve-wash-soft: rgba(144, 184, 0, 0.18);
+    --mg-ink-faint: rgba(6, 59, 0, 0.55);
+    --mg-line: rgba(6, 59, 0, 0.16);
+    --mg-shadow: rgba(6, 59, 0, 0.16);
 
     --mg-serif: "Fraunces", serif;
     --mg-sans: "Inter", sans-serif;
