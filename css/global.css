@@ -261,6 +261,29 @@ hr {
     margin: 1rem 0;
 }
 
+/* ---------------------------------------------------------- cursor glow */
+/* pure colour, no illustration: a soft blend of the two background tones
+   that trails the pointer — used on any page that loads js/design-reveal.js */
+
+.mg-cursor-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 220px;
+    margin: -110px 0 0 -110px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(144, 184, 0, 0.4) 0%,
+        rgba(38, 98, 16, 0.08) 55%,
+        rgba(38, 98, 16, 0) 75%
+    );
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+}
+
 /* ---------------------------------------------------------------- footer */
 
 footer.mg-footer {
@@ -291,6 +314,10 @@ footer.mg-footer p {
         width: 100%;
         justify-content: flex-start;
         gap: 1.25rem;
+    }
+
+    .mg-cursor-glow {
+        display: none;
     }
 }
 

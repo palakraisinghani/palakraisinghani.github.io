@@ -11,18 +11,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const resolveUrl = (post) => post.external ? post.url : basePath + post.url;
     const linkAttrs = (post) => post.external ? ' target="_blank" rel="noopener noreferrer"' : '';
     const linkLabel = (post) => post.title + (post.external ? ' ' + externalIcon : '');
-    const metaHTML = (post) => `<span class="blog-date">${post.date}</span><span class="blog-tags-display">${post.tags.join(', ')}</span>`;
+    const tagChips = (post) => post.tags.map(t => `<span class="blog-tag-chip">${t}</span>`).join('');
+    const metaHTML = (post) => `<span class="blog-date">${post.date}</span><span class="blog-tags-display">${tagChips(post)}</span>`;
 
     // --- Blog listing page ---
     const listEl = document.getElementById('blog-list');
     if (listEl) {
         listEl.innerHTML = BLOG_POSTS.map(post => `
-            <article class="blog-sect" data-tags="${post.tags.map(t => t.toLowerCase()).join(',')}">
+            <article class="blog-sect" data-reveal data-tags="${post.tags.map(t => t.toLowerCase()).join(',')}">
                 <h3><a href="${resolveUrl(post)}"${linkAttrs(post)}>${linkLabel(post)}</a></h3>
                 <div class="blog-meta">${metaHTML(post)}</div>
                 <p class="blog-desc">${post.desc}</p>
             </article>
         `).join('');
+    }
+
+    // --- Blog hero quote rotation ---
+    const heroImg = document.getElementById('blog-hero-img');
+    if (heroImg && typeof BLOG_QUOTES !== "undefined" && BLOG_QUOTES.length > 1) {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let quoteIndex = 0;
+
+        setInterval(() => {
+            quoteIndex = (quoteIndex + 1) % BLOG_QUOTES.length;
+            const nextQuote = BLOG_QUOTES[quoteIndex];
+
+            const swap = () => {
+                heroImg.src = nextQuote.src;
+                heroImg.alt = nextQuote.alt;
+            };
+
+            if (prefersReducedMotion) {
+                swap();
+            } else {
+                heroImg.classList.add('is-fading');
+                setTimeout(() => {
+                    swap();
+                    heroImg.classList.remove('is-fading');
+                }, 300);
+            }
+        }, 5000);
     }
 
     // --- Individual blog post page ---

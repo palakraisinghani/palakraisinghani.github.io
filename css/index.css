@@ -39,6 +39,7 @@
 .mg-sidebar-inner > *:nth-child(3) { animation-delay: 0.25s; }
 .mg-sidebar-inner > *:nth-child(4) { animation-delay: 0.35s; }
 .mg-sidebar-inner > *:nth-child(5) { animation-delay: 0.45s; }
+.mg-sidebar-inner > *:nth-child(6) { animation-delay: 0.55s; }
 
 /* rectangular portrait, colour-framed rather than illustrated */
 
@@ -65,6 +66,15 @@
 .mg-portrait-frame:hover .mg-portrait {
     transform: scale(1.03);
     box-shadow: 0 14px 30px var(--mg-shadow);
+}
+
+.mg-sidebar-name {
+    font-family: var(--mg-serif);
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    color: var(--mg-ink);
+    margin: 0 0 0.4rem 0;
 }
 
 .mg-name-unicode {
@@ -280,29 +290,6 @@
     margin: 0 0 0.6rem 0;
 }
 
-/* ---------------------------------------------------------- cursor glow */
-/* pure colour, no illustration: a soft blend of the two background tones
-   that trails the pointer across the page — About page only */
-
-.mg-cursor-glow {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 380px;
-    height: 380px;
-    margin: -190px 0 0 -190px;
-    border-radius: 50%;
-    background: radial-gradient(
-        circle,
-        rgba(144, 184, 0, 0.4) 0%,
-        rgba(38, 98, 16, 0.08) 55%,
-        rgba(38, 98, 16, 0) 75%
-    );
-    pointer-events: none;
-    z-index: 0;
-    will-change: transform;
-}
-
 /* --------------------------------------------------------------- mobile */
 
 @media (max-width: 860px) {
@@ -332,10 +319,6 @@
     .mg-award-grid {
         grid-template-columns: 1fr;
         gap: 2rem;
-    }
-
-    .mg-cursor-glow {
-        display: none;
     }
 }
 

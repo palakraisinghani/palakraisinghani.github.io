@@ -9,25 +9,47 @@
 </head>
 <body>
     <div id="global-header"></div>
-    <main>
-        <h1 class="page-title">Blogerikka</h1>
-        <hr>
-        <div id="tag-filters">
-            <button class="tag-btn" data-tag="research">Research</button>
-            <button class="tag-btn" data-tag="reflections">Reflections</button>
-            <button class="tag-btn" data-tag="philosophy">Philosophy</button>
-            <button class="tag-btn" data-tag="travel">Travel</button>
-        </div>
-        <hr>
-        
-        <div id="blog-list">
-            <!-- Populated automatically from js/blog-data.js -->
-        </div>
-    </main>
+
+    <div class="blog-shell">
+        <aside class="blog-sidebar">
+            <div class="blog-quote-frame">
+                <img
+                    class="blog-quote-img"
+                    id="blog-hero-img"
+                    src="assets/blog/quote1.png"
+                    alt="Writing is thinking. To write is to think clearly. That is why it can be hard."
+                />
+            </div>
+        </aside>
+
+        <main class="blog-main">
+            <h1 class="page-title">Blogerikka</h1>
+            <hr>
+
+            <p class="blog-filter-label">Filter by tag</p>
+            <div id="tag-filters">
+                <button class="tag-btn" data-tag="research">Research</button>
+                <button class="tag-btn" data-tag="reflections">Reflections</button>
+                <button class="tag-btn" data-tag="philosophy">Philosophy</button>
+                <button class="tag-btn" data-tag="travel">Travel</button>
+                <button class="tag-btn" data-tag="technical">Technical</button>
+                <button class="tag-btn" data-tag="concepts">Concepts</button>
+                <button class="tag-btn" data-tag="computer architecture">Computer Architecture</button>
+            </div>
+            <hr>
+
+            <div id="blog-list">
+                <!-- Populated automatically from js/blog-data.js -->
+            </div>
+        </main>
+    </div>
+
     <div id="global-footer"></div>
     <script src="js/components.js"></script>
     <script src="js/blog-data.js"></script>
+    <script src="js/blog-quotes.js"></script>
     <script src="js/blog.js"></script>
+    <script src="js/design-reveal.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
