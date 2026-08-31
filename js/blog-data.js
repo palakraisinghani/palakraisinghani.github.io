@@ -8,7 +8,7 @@ const BLOG_POSTS = [
         url: "blog/Efficient_Processing_DNN/index.html",
         date: "Sep 1, 2026",
         tags: ["Concepts", "Technical", "Computer Architecture"],
-        desc: "TODO: one-line description for the blog listing card",
+        desc: "Get a 10K feet view of Effecient Processing and the diversity of ideas blooming under this umbrella",
         external: false
     },
     {

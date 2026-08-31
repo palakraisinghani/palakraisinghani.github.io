@@ -212,12 +212,12 @@ header.mg-topbar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--mg-mauve-wash);
+    background-color: var(--mg-mauve-wash-soft);
     text-decoration: none;
     color: var(--mg-ink);
-    border: 1px solid var(--mg-mauve);
+    border: none;
     border-radius: 999px;
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
 }
 
 .mg-topbar-actions a:first-child {
@@ -234,9 +234,8 @@ header.mg-topbar {
 }
 
 .mg-topbar-actions a:hover {
-    background-color: var(--mg-ink);
-    border-color: var(--mg-ink);
-    color: var(--mg-cream);
+    background-color: var(--mg-mauve-wash);
+    color: var(--mg-ink);
     transform: translateY(-1px);
 }
 
@@ -255,19 +254,18 @@ header.mg-topbar {
     width: 36px;
     height: 36px;
     padding: 0;
-    background-color: var(--mg-mauve-wash);
+    background-color: var(--mg-mauve-wash-soft);
     color: var(--mg-ink);
-    border: 1px solid var(--mg-mauve);
+    border: none;
     border-radius: 999px;
     cursor: pointer;
     font: inherit;
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
 }
 
 .mg-theme-toggle:hover {
-    background-color: var(--mg-ink);
-    border-color: var(--mg-ink);
-    color: var(--mg-cream);
+    background-color: var(--mg-mauve-wash);
+    color: var(--mg-ink);
     transform: translateY(-1px);
 }
 
