@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+      (function () {
+        var stored = localStorage.getItem("mg-theme");
+        var dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (dark) document.documentElement.setAttribute("data-theme", "dark");
+      })();
+    </script>
+    <title>Exploratory Data Analysis of the Rented Bike Count in Seoul - Palak</title>
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="../../css/blog.css">
+</head>
+<body>
+    <div id="global-header"></div>
+    <main>
+        <!-- Title, date and tags are filled in automatically from js/blog-data.js -->
+        <div class="blog-post-header" data-blog-id="seoul-bike-eda"></div>
+
+        <p class="blog-post-lede">
+            Every feature looks statistically important on its own — until you check whether they're all telling you the same thing.
+        </p>
+
+        <p>
+            Data Analysis is the science of collecting data, transforming and interpreting it to derive useful insights and support better decisions. <em>This is one of my first attempts at detailed data analysis. I hope it serves as a good illustration for anyone looking to try out data analysis themselves. Or you can cherish the aesthetic and talkative plots in the blog.</em>
+        </p>
+
+        <h2>The Dataset</h2>
+
+        <p>
+            8,760 rows, one per hour, covering a full year of Seoul's public bike-share system. Alongside the target —
+            <code>Rented Bike Count</code> — sit nine numerical features (<code>Hour</code>, <code>Temperature</code>,
+            <code>Humidity</code>, <code>Wind speed</code>, <code>Visibility</code>, <code>Dew point temperature</code>,
+            <code>Solar Radiation</code>, <code>Rainfall</code>, <code>Snowfall</code>) and two categorical ones
+            (<code>Seasons</code>, <code>Holiday</code>).
+        </p>
+
+        <div class="blog-stat-row">
+            <div class="blog-stat"><div class="blog-stat-num">8,760</div><div class="blog-stat-label">hourly rows</div></div>
+            <div class="blog-stat"><div class="blog-stat-num">500</div><div class="blog-stat-label">missing Temperature values</div></div>
+            <div class="blog-stat"><div class="blog-stat-num">295</div><div class="blog-stat-label">"non-functioning day" rows excluded</div></div>
+        </div>
+
+        <p>
+            One standing rule, applied everywhere from here on: rows where <code>Functioning Day == "No"</code> are dropped.
+            Rentals are always exactly 0 there by definition — a data-collection artifact, not a low-demand signal. Leaving them in the dataset with zero rental bike counts can lead to a biased dataset.
+        </p>
+
+        <h2>Descriptive Analysis: What Happened?</h2>
+
+        <p>
+            Since the target variable is the rented bike count, most of our exploratory analysis will be focused on it.
+        </p>
+
+        <figure>
+            <img src="images/01_rentals_vs_day_by_season.png" alt="Daily total rented bike count over the year, colored by season">
+            <figcaption>Daily total rentals across the full year, colored by season.</figcaption>
+        </figure>
+
+        <p>
+            There is a very clear seasonal pattern observable with smooth transitions indicating the importance of seasonal shifts in the cycle renting behavior of the citizens of Seoul.
+            Summer averages 1,034 rentals/hour against Winter's 226 — a 4.5× ratio in raw means. The formal test run later
+            (Kruskal-Wallis on <code>Seasons</code>) confirms this as the largest categorical effect measured in this
+            dataset: epsilon-squared = 0.297, the highest effect size of any feature in the null-hypothesis screen below.
+        </p>
+
+        <h3>Hour</h3>
+
+        <figure>
+            <img src="images/02_rentals_vs_hour.png" alt="Scatter plot of rented bike count against hour of day">
+            <figcaption>Rented Bike Count against Hour of day — a distinct double-hump shape that has nothing to do with weather at all.</figcaption>
+        </figure>
+
+        <p>
+            The hourly profile is bimodal: a narrow morning peak around 8:00 (≈1,016 rentals/hour), a larger and broader evening
+            peak around 18:00 (≈1,503/hour, the daily maximum), and an overnight trough around 4:00 (≈133/hour, the daily minimum).
+            That shape is consistent with expected commuting patterns. Another closely related feature to <code>Hour</code> is
+            <code>Solar Radiation</code>, and we observe a very strong relationship visually in the graph below. We shall
+            formalize this correlation later in the diagnostic section.
+        </p>
+
+        <figure>
+            <img src="images/09_solar_radiation_vs_hour.png" alt="Solar radiation plotted against hour of day">
+            <figcaption>Solar Radiation against Hour of day — it's 0 for roughly half the dataset (nighttime hours) and rises and falls smoothly across the daylight hours, tracking Hour closely.</figcaption>
+        </figure>
+
+        <h3>Temperature and Dew Point: two sensors, one signal</h3>
+
+        <div class="blog-figure-pair">
+            <figure>
+                <img src="images/02_rentals_vs_temperature.png" alt="Scatter plot of rented bike count against temperature">
+                <figcaption>Temperature (Pearson r = 0.54; Spearman ρ = 0.61) — the steepest-looking rise among the raw feature scatters.</figcaption>
+            </figure>
+            <figure>
+                <img src="images/02_rentals_vs_dew_point_temperature.png" alt="Scatter plot of rented bike count against dew point temperature">
+                <figcaption>Dew point temperature (Pearson r = 0.38) — a visually similar rising shape to Temperature, which foreshadows the collinearity finding later in this post.</figcaption>
+            </figure>
+        </div>
+
+        <p>
+            Side by side, Temperature and Dew Point temperature produce visually similar scatters — comparable rise, comparable
+            spread. Are these indeed correlated or is it a statistical illusion? We answer this in the diagnostic analysis later.
+        </p>
+
+        <h3>Rainfall and Snowfall — and the Wall of Zeroes</h3>
+
+        <div class="blog-figure-pair">
+            <figure>
+                <img src="images/02_rentals_vs_rainfall.png" alt="Scatter plot of rented bike count against rainfall">
+                <figcaption>Rainfall — 0mm for 93.9% of hours (7,949 of 8,465); the remaining 6.1% skew toward lower rental counts.</figcaption>
+            </figure>
+            <figure>
+                <img src="images/02_rentals_vs_snowfall.png" alt="Scatter plot of rented bike count against snowfall">
+                <figcaption>Snowfall — 0cm for 94.8% of hours (8,022 of 8,465); the same downward pull in the remaining 5.2%.</figcaption>
+            </figure>
+        </div>
+
+        <p>
+            In both scatter plots, the large majority of points sit stacked on the x = 0 line (dry hours). The remaining
+            nonzero hours form a sparse cluster at low rental counts. This is called zero-inflation. Does rainfall actually
+            affect rented bike count, or is it simply the absence of rain on most days that creates such an illusion? Later
+            tests instead split each feature into a zero group and a nonzero group and compare those with a rank-based test
+            (Mann-Whitney U), which doesn't assume either group is normally distributed and establishes any effect of these
+            features on rented bike count.
+        </p>
+
+        <h3>Visibility, Solar Radiation, Wind speed, and Humidity: the low-signal group</h3>
+
+        <div class="blog-figure-group-4">
+            <figure>
+                <img src="images/02_rentals_vs_visibility.png" alt="Scatter plot of rented bike count against visibility">
+                <figcaption>Visibility (Spearman ρ = 0.20 vs. rentals) — a hard ceiling at 2,000 (the sensor's maximum reading) compresses the upper end of the distribution.</figcaption>
+            </figure>
+            <figure>
+                <img src="images/02_rentals_vs_solar_radiation.png" alt="Scatter plot of rented bike count against solar radiation">
+                <figcaption>Solar Radiation (Spearman ρ = 0.41) — 0 for roughly half the dataset (nighttime hours) — a "day/night hour proxy" as described before.</figcaption>
+            </figure>
+            <figure>
+                <img src="images/02_rentals_vs_wind_speed.png" alt="Scatter plot of rented bike count against wind speed">
+                <figcaption>Wind speed (Spearman ρ = 0.16) — the smallest effect size of any feature in the formal screen below (epsilon-squared = 0.030).</figcaption>
+            </figure>
+            <figure>
+                <img src="images/02_rentals_vs_humidity.png" alt="Scatter plot of rented bike count against humidity">
+                <figcaption>Humidity (Spearman ρ = −0.23) — the scatter looks more like a threshold than a straight line, a pattern investigated further below.</figcaption>
+            </figure>
+        </div>
+
+        <p>
+            All four correlate more weakly with <code>Rented Bike Count</code> than Temperature or Season do, and three of
+            the four scatters show no visually obvious trend at all. We see some grouping in the solar radiation plot but the
+            other three seem very scattered with no clear visible pattern. It is worth highlighting that a low correlation
+            coefficient or a noisy-looking plot is evidence <em>against</em> a strong effect, but it is not equivalent to a
+            formal test of "no/very low effect," and it says nothing about non-linear or threshold-shaped relationships that
+            a scatter plot can hide. The null-hypothesis screen further down runs that formal test for all eleven features.
+            If features have a strong enough impact on the target variable, we aim to diagnose such relations or otherwise
+            identify less relevant/impactful features and exclude them from further analysis.
+        </p>
+
+        <h2>Diagnosis: Why Did It Happen?</h2>
+
+        <p>
+            Each pattern spotted in the descriptive pass — a seasonal swing, an hourly double-hump, a possible threshold
+            in Humidity, a variable that looked more like a day/night proxy than a genuine weather effect — requires a formal
+            statistical test behind it rather than just eyeballing a plot. We begin our diagnostic analysis with null hypothesis
+            tests for each feature.
+        </p>
+
+        <h3>Null Hypothesis Tests</h3>
+
+        <p>
+            Before chasing individual interactions and thresholds, we run one consistent, systematic null hypothesis test across
+            <em>every</em> feature: H0 = "the feature does not affect <code>Rented Bike Count</code>." Each feature gets
+            exactly <strong>one</strong> decision-driving test — a binned Kruskal-Wallis for numeric features (sensitive to
+            both monotonic and non-monotonic effects, so it catches threshold-shaped and non-linear relationships a plain
+            correlation would miss), or a zero-vs-nonzero Mann-Whitney U for the heavily zero-inflated ones (Rain, Snow,
+            where most values are exactly 0 and a quartile split isn't meaningful). Seasons (4 groups) uses Kruskal-Wallis
+            and Holiday (2 groups) uses Mann-Whitney U for the same reason.
+        </p>
+
+        <p>
+            <strong>Why measure effect size:</strong> p-values give us the probability of observing a particular statistic
+            under the assumption that the null hypothesis is true. When the p-value falls below a certain bar — the
+            predetermined significance level — we reject the null hypothesis. It is worth noting that tiny effects in large
+            samples can be strong enough to reject the null hypothesis even if the practical difference is not large. This is
+            where effect size comes in, quantifying the magnitude of a statistical result in a way that is independent of
+            sample size.
+        </p>
+
+        <p>
+            <strong>Why measure confidence interval:</strong> a confidence interval gives the range in which the true
+            population value would fall X% of the time, if the same estimation procedure were repeated on many random samples
+            from the dataset. Effect size alone is a single point estimate and loses information on how certain we are of
+            that effect — highly variable data can produce a large effect size on one sample that doesn't hold up on the next.
+            A confidence interval makes that variability visible: if it excludes zero, we reject the null hypothesis; if it
+            includes zero, we fail to reject it.
+        </p>
+
+        <div class="blog-table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Feature</th><th>Effect size</th><th>p-value</th><th>95% CI</th><th>Decision</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>Temperature(C)</code></td><td>eps²=0.371</td><td>≈0</td><td>[0.356, 0.386]</td><td><strong>Reject H0</strong></td></tr>
+                    <tr><td><code>Seasons</code></td><td>eps²=0.297</td><td>≈0</td><td>[0.284, 0.310]</td><td><strong>Reject H0</strong></td></tr>
+                    <tr><td><code>Hour</code></td><td>eps²=0.241</td><td>≈0</td><td>[0.226, 0.256]</td><td><strong>Reject H0</strong></td></tr>
+                    <tr><td><code>Dew point temperature(C)</code></td><td>eps²=0.191</td><td>≈0</td><td>[0.178, 0.205]</td><td><strong>Reject H0</strong></td></tr>
+                    <tr><td><code>Solar Radiation (MJ/m2)</code></td><td>eps²=0.158</td><td>2.21×10⁻²⁹²</td><td>[0.146, 0.172]</td><td><strong>Reject H0</strong></td></tr>
+                    <tr><td><code>Rainfall(mm)</code></td><td>rank-biserial=−0.734</td><td>2.97×10⁻¹⁷²</td><td>[−0.766, −0.700]</td><td><strong>Reject H0</strong></td></tr>
+                    <tr><td><code>Snowfall (cm)</code></td><td>rank-biserial=−0.640</td><td>4.38×10⁻¹¹⁴</td><td>[−0.667, −0.611]</td><td><strong>Reject H0</strong></td></tr>
+                    <tr><td><code>Humidity(%)</code></td><td>eps²=0.076</td><td>2.5×10⁻¹⁴⁰</td><td>[0.066, 0.088]</td><td><strong>Reject H0</strong></td></tr>
+                    <tr><td><code>Visibility (10m)</code></td><td>eps²=0.045</td><td>4.29×10⁻⁸³</td><td>[0.036, 0.054]</td><td><strong>Reject H0</strong></td></tr>
+                    <tr><td><code>Holiday</code></td><td>rank-biserial=−0.239</td><td>3.26×10⁻¹⁶</td><td>[−0.297, −0.179]</td><td><strong>Reject H0</strong></td></tr>
+                    <tr><td><code>Wind speed (m/s)</code></td><td>eps²=0.030</td><td>2.97×10⁻⁵⁶</td><td>[0.024, 0.038]</td><td><strong>Reject H0</strong></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4>All 11 Features Reject H0</h4>
+
+        <ul>
+            <li>Every one of the 11 features clears the 95% bar on its own, individually, so none can be written off as
+                pure noise.</li>
+            <li>But "statistically distinguishable from zero" and "practically important" are not the same claim — the
+                effect sizes in the table make that gap visible.</li>
+            <li>Ranked within their own metric, <code>Wind speed</code> (eps²=0.030), <code>Visibility</code>
+                (eps²=0.045), and <code>Humidity(%)</code> (eps²=0.076) are the three weakest of the epsilon-squared group by
+                a wide margin — each explains only a few percent of the variance in rentals, versus 0.37 for Temperature or
+                0.30 for Seasons.</li>
+            <li><code>Holiday</code> (rank-biserial=−0.239) is similarly the weakest of the rank-biserial group, well short
+                of Rainfall's −0.734 or Snowfall's −0.640.</li>
+            <li>These four features — Wind speed, Visibility, Humidity, Holiday — are confidently non-zero, but small
+                enough in magnitude that they contribute comparatively little explanatory power: reasonable candidates to
+                deprioritize or drop for parsimony once modeling starts, even though this screen can't formally reject
+                them.</li>
+            <li>The null tests above have been done for each feature <em>in isolation</em> — it says nothing about whether
+                the remaining, stronger features are actually independent pieces of information, or whether some of them
+                are just restating each other.</li>
+        </ul>
+
+        <h3>Pairwise Feature Correlation</h3>
+
+        <p>
+            The null-hypothesis screen above tests each feature against the target, one at a time — it says nothing about
+            whether the features are independent of <em>each other</em>. At an extreme, all 11 features could just be scaled
+            versions of each other, which would mean a lot of redundant information being captured. To remove such redundancy
+            before prescriptive analysis, we aim to find features which are highly correlated and take up more space than the
+            information they add.
+        </p>
+
+        <p>
+            Since the 11 features mix numeric and categorical types, there's no single correlation coefficient that
+            applies to every pair — and a numeric×numeric correlation (which has a meaningful sign) isn't really the
+            same kind of number as a categorical association-strength measure (which doesn't). Rather than force all 55
+            pairs onto one shared color scale, this is split into three separate charts, one per pair-type.
+        </p>
+
+        <figure>
+            <img src="images/20a_heatmap_numeric_numeric.png" alt="9 by 9 heatmap of signed Spearman correlation between all numeric features">
+            <figcaption>Numeric×numeric (9×9): signed Spearman ρ</figcaption>
+        </figure>
+
+        <figure>
+            <img src="images/20b_heatmap_categorical_numeric.png" alt="2 by 9 heatmap of association strength between Seasons/Holiday and the numeric features">
+            <figcaption>Categorical×numeric (2×9): <code>sqrt(epsilon-squared)</code> for Seasons (Kruskal-Wallis, 4
+                groups) or <code>|rank-biserial|</code> for Holiday (Mann-Whitney U, 2 groups) — magnitude only, since
+                neither has a meaningful "direction" against a numeric feature.</figcaption>
+        </figure>
+
+        <figure style="max-width: 200px; margin-left: auto; margin-right: auto;">
+            <img src="images/20c_heatmap_categorical_categorical.png" alt="2 by 2 heatmap of Cramer's V between Seasons and Holiday">
+            <figcaption>Categorical×categorical (2×2): Cramér's V.</figcaption>
+        </figure>
+
+        <p>
+            In the numeric×numeric chart, the highest off-diagonal correlation exists between Dew Point and Temperature —
+            we shall see how we can use this to our benefit later. Also note how Humidity is the one feature that has the
+            highest-magnitude correlations. Can we express it in terms of other features? If yes, it can be safely removed
+            from further analysis, especially predictive-model training — or can it? It turns out simplifying your model
+            this way by dropping features is a loss of information that might not be recoverable if the correlated features
+            diverge in the future.
+        </p>
+
+        <h2>The Hidden Redundancy: What VIF Adds Beyond the Pairwise View</h2>
+
+        <p>
+            The heatmaps above already showed pairwise association: Temperature↔Dew Point (ρ = 0.914) is the only pair
+            that clears a strict 0.8 threshold, and everything else looks fine on a pair-by-pair basis. But pairwise
+            correlation only catches redundancy <em>between two features at a time</em>. A feature can look only weakly
+            correlated with every other feature individually, while still being almost fully explained by some
+            <em>combination</em> of them. That's exactly what a <strong>Variance Inflation Factor (VIF)</strong> check is
+            for — and it told a different story:
+        </p>
+
+        <div class="blog-table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Feature</th><th>VIF</th><th>Flagged (&gt; 10)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>Dew point temperature(C)</code></td><td>117.47</td><td class="blog-flagged">YES</td></tr>
+                    <tr><td><code>Temperature(C)</code></td><td>88.44</td><td class="blog-flagged">YES</td></tr>
+                    <tr><td><code>Humidity(%)</code></td><td>20.42</td><td class="blog-flagged">YES</td></tr>
+                    <tr><td><code>Solar Radiation (MJ/m2)</code></td><td>2.00</td><td class="blog-ok">no</td></tr>
+                    <tr><td><code>Visibility (10m)</code></td><td>1.58</td><td class="blog-ok">no</td></tr>
+                    <tr><td><code>Wind speed (m/s)</code></td><td>1.27</td><td class="blog-ok">no</td></tr>
+                    <tr><td><code>Hour</code></td><td>1.18</td><td class="blog-ok">no</td></tr>
+                    <tr><td><code>Snowfall (cm)</code></td><td>1.10</td><td class="blog-ok">no</td></tr>
+                    <tr><td><code>Rainfall(mm)</code></td><td>1.09</td><td class="blog-ok">no</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p>
+            <code>Humidity(%)</code> lands at VIF = 20.4 — well past the flag threshold — despite never breaking 0.53 in
+            any single pairwise correlation. It's not redundant with any one feature; it's redundant with the
+            <em>combination</em> of Temperature and Dew Point. Pairwise correlation alone would have missed it entirely.
+        </p>
+
+        <h3>Holiday and No Holiday and the Hourly Pattern</h3>
+
+        <figure>
+            <img src="images/05_hourly_profile_weekday_vs_weekend.png" alt="Hourly rental profile split by weekday and weekend/holiday">
+            <figcaption>No-Holiday and Holiday hourly profiles both peak in the evening (18:00 vs 17:00) — the clean "No-Holiday commute, Holiday leisure" split hypothesized up front doesn't fully hold up.</figcaption>
+        </figure>
+
+        <p>
+            No-Holiday days have a peak around 8:00 that is absent on holidays, giving sufficient reason to believe that the
+            morning commute may be work-driven. However, traffic peaks around 18:00 on all days, leaving it hard to reason
+            about the nature and cause of that commute. Such analysis is not of much interest here, though, so we don't chase
+            it further.
+        </p>
+
+        <p>
+            That line plot only shows each hour's <em>mean</em>, though — it says nothing about how much rentals vary
+            around that mean at a given hour. The box-whisker plot below puts No Holiday and Holiday side by side at every
+            hour, showing the median, interquartile range, whiskers, and outliers directly instead of collapsing each hour
+            down to a single point.
+        </p>
+
+        <figure>
+            <img src="images/17_rentals_by_hour_holiday_boxplot.png" alt="Box-whisker plot of rented bike count by hour, split by Holiday and No Holiday">
+            <figcaption>Rented Bike Count by Hour, Holiday vs No Holiday, as box-whisker plots — median and IQR track the line plot's shape, but the boxes and whiskers make the spread at each hour visible. No-Holiday hours have consistently tighter boxes than Holiday hours at the same time of day, and Holiday's whiskers/outliers stretch further — consistent with the small Holiday sample (432 rows total) producing noisier, more variable hourly distributions.</figcaption>
+        </figure>
+
+        <p>The box plot above visually confirms that the morning traffic on non-holidays is indeed not an illusion of the mean.</p>
+
+        <h3>Temperature: How Do We Fill In the Missing Values?</h3>
+
+        <p>
+            478 of the rows kept for analysis have no <code>Temperature(C)</code> reading. <code>Dew point temperature(C)</code>
+            is a feature which is never missing whenever Temperature is, and which the earlier scatter-plot comparison already
+            showed tracking Temperature almost in lockstep.
+        </p>
+
+        <figure>
+            <img src="images/07_pairplot_rentals_temp_dewpoint.png" alt="Pairplot of rentals, temperature, and dew point temperature">
+            <figcaption>Temperature and Dew Point temperature move almost in lockstep — visually obvious once you plot them against each other, not just against the target.</figcaption>
+        </figure>
+
+        <figure>
+            <img src="images/06_rentals_temp_dewpoint_timeseries.png" alt="Time series of rentals, temperature, and dew point over a rolling window">
+            <figcaption>Temperature and Dew Point track each other closely over time too — two different sensors, largely one underlying signal.</figcaption>
+        </figure>
+
+        <p>
+            Correlating the two directly: Pearson r = 0.914, Spearman ρ = 0.914 between <code>Temperature(C)</code> and
+            <code>Dew point temperature(C)</code> (computed on the 7,987 rows where both are observed) — a strong,
+            near-linear relationship. Fitting an ordinary least squares regression of Temperature on Dew Point over those
+            same rows gives the equation actually used to fill the missing values:
+        </p>
+
+        <div class="blog-callout">
+            <p>
+                <code>Temperature(C) ≈ 0.836 × Dew point temperature(C) + 9.471</code>&nbsp; (R² = 0.836, n = 7,987)
+            </p>
+        </div>
+
+        <p>
+            R² = 0.836 means Dew Point alone accounts for about 84% of the variance in Temperature.
+        </p>
+
+        <p>
+            This relies on one assumption worth stating explicitly: that Temperature is missing independent of its own
+            (unobserved) value, conditional on Dew Point — not separately tested here. It also understates uncertainty in
+            the imputed rows, since each one gets a single point estimate rather than a distribution.
+        </p>
+
+        <h3>Rain and Snow: Effect Visualized</h3>
+
+        <p>
+            Before looking at whether rain and snow suppress rentals, it's worth seeing <em>when</em>
+            each one actually happens across the year. The scatter below plots every rainy hour and
+            every snowy hour by date, colored by season.
+        </p>
+
+        <figure>
+            <img src="images/21_rain_snow_yearly_spread.png" alt="Two scatter plots showing rainy hours and snowy hours plotted by date across the year, colored by season">
+            <figcaption>Left: all 516 rainy hours by date (191 Spring, 197 Summer, 87 Autumn, 41 Winter). Right: all 443 snowy hours by date (0 Spring, 0 Summer, 51 Autumn, 392 Winter). Rain is spread across Spring/Summer/Autumn and clusters heaviest in Summer; snow is almost entirely confined to Winter, with only a modest spillover into Autumn and none into Spring or Summer. The two precipitation types occupy largely disjoint, season-aligned windows of the year rather than overlapping.</figcaption>
+        </figure>
+
+        <p>
+            The previous plots on Rainfall and Snowfall give less of an idea of the real impact of rain and snow on rented
+            bike count — they only plotted the rainy/snowy hours in isolation. The swarm plots below aid a comparative study
+            and confirm the impact of rain and snow on rented bike count. A closer look also reveals that rain impacted
+            rented bike count to a lesser extent in summer compared to a higher negative impact in the other seasons. As for
+            snow, its impact seems smaller since rented bike counts in winter are already fairly low.
+        </p>
+
+        <div class="blog-figure-pair">
+            <figure>
+                <img src="images/22_rain_swarm_by_season.png" alt="Swarm plot of rented bike count, rain vs no rain, one panel per season">
+                <figcaption>Every hour plotted individually, dry vs. rainy, one panel per season. Winter's rain cloud (n=41) is visibly sparse compared to Spring/Summer/Autumn — the point cloud itself communicates the small sample, rather than hiding it inside a smoothed shape.</figcaption>
+            </figure>
+            <figure>
+                <img src="images/23_snow_swarm_by_season.png" alt="Swarm plot of rented bike count, snow vs no snow, one panel per season">
+                <figcaption>Same layout for snow. Spring and Summer have zero snowy hours (no red points at all), Autumn has a modest 51, and Winter (n=392) is the only season with a dense enough cloud to read confidently.</figcaption>
+            </figure>
+        </div>
+
+        <p>
+            Turning the same per-season comparisons into numbers: a Mann-Whitney U test plus a
+            bootstrap 95% CI on the mean rentals difference, run separately in every season for
+            both Rain and Snow. Seasons where the smaller of the two groups has fewer than 30
+            observations are flagged explicitly, rather than presenting a CI that looks precise but
+            isn't backed by enough data. It confirms our intuition of the lower additional effect of snow in winter.
+        </p>
+
+        <figure>
+            <img src="images/24_rain_snow_effect_by_season_ci.png" alt="Point-range plot of the mean rentals difference between dry and wet hours, with 95% confidence intervals, for rain and snow in each season">
+            <figcaption>Mean rentals difference (dry − wet) ± 95% bootstrap CI, one row per season, Rain and Snow together on one chart. Every interval sits comfortably to the right of zero — the effect direction is consistent everywhere it can be tested — but interval width varies a lot: Winter Rain's bar (n=41) is visibly wider than Summer Rain's (n=197), making the small-sample seasons' extra uncertainty visible at a glance rather than only stated in a table.</figcaption>
+        </figure>
+
+        <p>
+            Reading the two visualizations together: Rain's effect held up in all 4 seasons this
+            time (Spring 718, Summer 852, Autumn 795, Winter 141 rentals/hr lower when raining, all
+            with CIs excluding 0), though Winter's estimate is both smaller and — with only 41 rainy
+            hours to work with — the least precisely pinned down. Snow could only be tested in
+            Autumn (540 lower, n=51) and Winter (83 lower, n=392); Spring and Summer simply never
+            have enough snowy hours to test at all, which is itself a finding, not a gap in the
+            analysis.
+        </p>
+
+        <h2>Summary</h2>
+
+        <p>
+            <strong>Descriptive analysis:</strong> Season and Hour are the dominant patterns, with Temperature and Dew Point
+            moving almost as one signal. We plotted the variation of the target feature against each of the other features.
+        </p>
+
+        <p>
+            <strong>Diagnostic analysis:</strong> pinning down causation and correlation.
+        </p>
+        <ul>
+            <li><strong>Hypothesis tests:</strong> all 11 features individually reject H0 at 95% — none can be dismissed as
+                noise, though Wind speed, Visibility, Humidity, and Holiday are the weakest.</li>
+            <li><strong>Independence:</strong> only Temperature↔Dew Point clears pairwise correlation, but VIF exposes a
+                deeper Temperature/Dew Point/Humidity/Season cluster that pairwise checks alone missed.</li>
+            <li><strong>Extra digging:</strong> the Temperature↔Dew Point redundancy doubles as the fix for 478 missing
+                Temperature values. We also looked closely at the impact of rain and snow on rented bike count despite the
+                zero-inflation effect.</li>
+        </ul>
+
+        <h2>What's Next</h2>
+
+        <p>
+            <strong>Predictive:</strong> forecast <code>Rented Bike Count</code> for a given hour. Feature prep needs to
+            resolve the Temperature/Dew Point/Humidity collinearity found above (drop one, or lean on a model that isn't
+            bothered by it) and cyclically encode <code>Hour</code> and one-hot <code>Seasons</code>/<code>Holiday</code>
+            rather than treating them as plain numbers. A linear regression baseline will make that collinearity decision
+            matter directly; a tree-based model (Random Forest / Gradient Boosting) sidesteps it and is the planned main
+            model, evaluated with RMSE/MAE and residual plots broken out by hour and season.
+        </p>
+
+        <p>
+            <strong>Prescriptive:</strong> turn those forecasts into operational calls — how many bikes to allocate or
+            stations to staff, by hour and season. That's deferred until the predictive model exists, since it consumes
+            forecasts rather than raw features, and a feature judged redundant for prediction isn't automatically safe to
+            ignore when a human is making an operational decision from it.
+        </p>
+
+        <p class="blog-post-footnote">
+            Analysis of the Seoul Bike Sharing dataset (UCI Machine Learning Repository). Diagnostic phase — predictive
+            modeling to follow.
+        </p>
+
+        <!-- Previous/Next Blog links are filled in automatically based on
+             this post's position in js/blog-data.js -->
+        <div id="blog-end"></div>
+    </main>
+    <div id="global-footer"></div>
+    <script src="../../js/components.js"></script>
+    <script src="../../js/blog-data.js"></script>
+    <script src="../../js/blog.js"></script>
+    <script src="../../js/main.js"></script>
+</body>
+</html>

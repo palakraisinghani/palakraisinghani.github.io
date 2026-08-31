@@ -3,8 +3,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     if (typeof BLOG_POSTS === "undefined") return;
 
-    const inSubdir = window.location.pathname.includes('/blog/') && !window.location.pathname.endsWith('/blog.html');
-    const basePath = inSubdir ? '../' : '';
+    const inBlogPost = /\/blog\/[^/]+\/[^/]*$/.test(window.location.pathname);
+    const basePath = inBlogPost ? '../../' : '';
 
     const externalIcon = '<svg class="external-link-icon" viewBox="0 0 24 24" width="14" height="14"><path d="M14 3h7v7h-2v-3.586l-9.293 9.293-1.414-1.414 9.293-9.293h-3.586v-2zM5 21c-1.103 0-2-.897-2-2v-14c0-1.103.897-2 2-2h7v2h-7v14h14v-7h2v7c0 1.103-.897 2-2 2h-14z"/></svg>';
 

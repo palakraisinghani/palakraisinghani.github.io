@@ -30,15 +30,19 @@ should be resolved deliberately rather than silently.
 /experience.html          Timeline of roles/programs
 /projects.html            Tabbed project listing (shell only, content is fetched)
 /blog.html                Blog listing (shell only, content is rendered from data)
-/blog/*.html               Individual blog posts
-/blog/TEMPLATE.html        Copy-this-file template for a new post
+/blog/<slug>/index.html    Individual blog post, one folder per post — any
+                             images/files the post needs live in the same
+                             folder, next to its index.html
+/blog/TEMPLATE/index.html  Copy-this-folder template for a new post
 /projects/*.html            Per-tab project fragments, fetched by projects.js
 /creative_corner/           Standalone experimental microsite, NOT linked from
                              the main nav (see §8)
 /css/                      One stylesheet per page + global.css
 /js/                       Vanilla JS, no modules (plain <script> tags, load
                              order matters — see below)
-/assets/                   Images, CV PDF, logos
+/assets/                   Images, CV PDF, logos (site-wide assets only —
+                             a post's own images live in its own blog/<slug>/
+                             folder instead, see §4)
 ```
 
 ## 3. Shared page chrome (`js/components.js`)
@@ -60,15 +64,14 @@ new top-level page is added, add its link to the `headerHTML` template in
 `components.js`, not to individual pages.
 
 **Path resolution rule:** `components.js` detects whether the current page is
-inside `/blog/` (i.e. one directory deep) and prefixes links with `../`
-accordingly:
+a blog post (i.e. `blog/<slug>/index.html`, two directories deep) and
+prefixes links with `../../` accordingly:
 ```js
-const inSubdir = window.location.pathname.includes('/blog/')
-                  && !window.location.pathname.endsWith('/blog.html');
-const basePath = inSubdir ? '../' : '';
+const inBlogPost = /\/blog\/[^/]+\/[^/]*$/.test(window.location.pathname);
+const basePath = inBlogPost ? '../../' : '';
 ```
 Any new script that needs to link back to root-level pages/assets from a
-subdirectory must reuse this same `inSubdir`/`basePath` pattern (see
+post folder must reuse this same `inBlogPost`/`basePath` pattern (see
 `js/blog.js`) rather than inventing a new one — it must handle the same set
 of page depths consistently across the whole site.
 
@@ -85,8 +88,8 @@ const BLOG_POSTS = [
   {
     id: "life-of-lots-of-pie",          // must match a post's data-blog-id
     title: "Life of Lots of Pie",
-    url: "blog/Life_of_lots_of_pie.html", // site-root-relative; for external
-                                           // posts, a full https:// URL
+    url: "blog/life-of-lots-of-pie/index.html", // site-root-relative; for
+                                           // external posts, a full https:// URL
     date: "May 26, 2026",
     tags: ["Reflections"],
     desc: "...",                         // shown only on the listing page
@@ -129,16 +132,26 @@ On `DOMContentLoaded`, if `BLOG_POSTS` is defined:
 ```
 `blog-data.js` before `blog.js` (needs the array to exist), `blog.js` before
 `main.js` (needs the DOM it generates to exist before tag-filtering wires up).
-From `blog/`, all four paths get a `../` prefix.
+From a post's own folder (`blog/<slug>/`), all four paths get a `../../`
+prefix.
 
 ### 4.3 Adding a new post
 
-1. Copy `blog/TEMPLATE.html` to `blog/your-post.html`.
+Each post lives in its own folder — `blog/<slug>/index.html` — alongside any
+images or other files it needs, instead of a flat `blog/*.html` file next to
+a shared `assets/blog/` folder. This keeps a post and its media as one
+self-contained, movable/deletable unit.
+
+1. Copy `blog/TEMPLATE/` to `blog/your-post/` (the folder name becomes the
+   post's URL segment).
 2. Add one entry to `BLOG_POSTS` in `js/blog-data.js` at the position that
-   matches its publish date (newest first).
+   matches its publish date (newest first), with
+   `url: "blog/your-post/index.html"`.
 3. Set `data-blog-id` on the post's `.blog-post-header` div to match the
    `id` you used in step 2.
 4. Write content inside `<main>`, between the header div and `#blog-end`.
+   Any images/PDFs the post needs go directly in `blog/your-post/`, referenced
+   with a plain relative path (e.g. `src="photo.jpg"`).
 
 No other file needs to change. Specifically: never hand-write a
 Previous/Next link, and never hand-write a listing card in `blog.html`.
@@ -276,15 +289,15 @@ entries:
   mount point; all post titles/dates/tags/descriptions come from
   `js/blog-data.js` (§4.1).
 - Current posts, newest first (see `js/blog-data.js` for the live list):
-  1. **Life of Lots of Pie** (`blog/Life_of_lots_of_pie.html`) — JEE
+  1. **Life of Lots of Pie** (`blog/life-of-lots-of-pie/index.html`) — JEE
      preparation journey and advice for aspirants.
-  2. **The Tale that tells Taste** (`blog/the_tale_that_tells_taste.html`)
+  2. **The Tale that tells Taste** (`blog/tale-that-tells-taste/index.html`)
      — reflection on expectations vs. enjoyment, prompted by a conversation
      with a friend.
   3. **Numbers, Logic & Garden of Ideas** — external Indian Express article
      about JEE and the path to IISc Bangalore (`external: true`, opens in a
      new tab).
-  4. **The Red Sun in the White Sky** (`blog/japan.html`) — travel account
+  4. **The Red Sun in the White Sky** (`blog/japan/index.html`) — travel account
      of a May 2025 trip to Japan, including two short poems and reflections
      on Japanese lifestyle, discipline, and cuisine.
 

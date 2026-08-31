@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+      (function () {
+        var stored = localStorage.getItem("mg-theme");
+        var dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (dark) document.documentElement.setAttribute("data-theme", "dark");
+      })();
+    </script>
+    <title>Pipelining - Palak</title>
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="../../css/blog.css">
+</head>
+<body>
+    <div id="global-header"></div>
+    <main>
+        <div class="blog-post-header" data-blog-id="pipelining"></div>
+        
+        
+            
+        <div id="blog-end"></div>
+
+    </main>
+    <div id="global-footer"></div>
+    <script src="../../js/components.js"></script>
+    <script src="../../js/blog-data.js"></script>
+    <script src="../../js/blog.js"></script>
+    <script src="../../js/main.js"></script>
+</body>
+</html>

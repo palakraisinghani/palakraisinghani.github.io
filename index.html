@@ -3,6 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        var stored = localStorage.getItem("mg-theme");
+        var dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (dark) document.documentElement.setAttribute("data-theme", "dark");
+      })();
+    </script>
     <title>About - Palak</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -82,7 +89,7 @@
         <section class="mg-section" data-reveal>
           <h2>Work</h2>
           <p>
-            I was introduced to <a href="https://www.csa.iisc.ac.in/~vg/">research at IISc</a>. Ever since
+            I was introduced to research at IISc. Ever since
             I have had the opportunity of being in two research projects, both of which I have learnt a lot from.
             I serve as a core member of <a href="https://databased.csa.iisc.ac.in/">Databased</a>, the
             undergraduate computer science crew at IISc. Please check out my

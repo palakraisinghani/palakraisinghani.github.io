@@ -31,6 +31,26 @@
     --mg-mono: "JetBrains Mono", monospace;
 }
 
+/* dark mode: grey ground, pink-red accents/text-formatting, ivory text —
+   purple is reserved for the sidebar only, maroon for the topbar only */
+
+:root[data-theme="dark"] {
+    --mg-cream: #232228;
+    --mg-mauve: #e0466b;
+    --mg-slate: #e9e3d3;
+    --mg-ink: #fdfbe9;
+
+    --mg-panel: #B52B65;
+    /* --mg-panel: #8b2626; */
+    --mg-sidebar: #412b6b;
+    --mg-card: rgba(224, 70, 107, 0.1);
+    --mg-mauve-wash: rgba(224, 70, 107, 0.35);
+    --mg-mauve-wash-soft: rgba(224, 70, 107, 0.18);
+    --mg-ink-faint: rgba(233, 227, 211, 0.6);
+    --mg-line: rgba(233, 227, 211, 0.16);
+    --mg-shadow: rgba(0, 0, 0, 0.5);
+}
+
 * {
     box-sizing: border-box;
 }
@@ -44,21 +64,22 @@ body {
     font-size: 1.05rem;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a {
     color: var(--mg-slate);
-    text-decoration: none;
-    background-image: linear-gradient(var(--mg-ink), var(--mg-ink));
-    background-position: 0 100%;
-    background-repeat: no-repeat;
-    background-size: 0% 1px;
-    transition: background-size 0.25s ease, color 0.25s ease;
+    text-decoration: underline;
+    text-decoration-color: var(--mg-mauve);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    transition: text-decoration-color 0.25s ease, text-decoration-thickness 0.25s ease, color 0.25s ease;
 }
 
 a:hover {
     color: var(--mg-ink);
-    background-size: 100% 1px;
+    text-decoration-color: var(--mg-ink);
+    text-decoration-thickness: 1.5px;
 }
 
 /* ------------------------------------------------------------- animations */
@@ -123,14 +144,13 @@ header.mg-topbar {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--mg-ink);
-    background-image: none;
+    text-decoration: none;
     white-space: nowrap;
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .mg-logo:hover {
     color: var(--mg-ink);
-    background-size: 0;
     transform: rotate(-2deg) scale(1.05);
 }
 
@@ -147,7 +167,7 @@ header.mg-topbar {
     font-size: 0.92rem;
     font-weight: 500;
     color: var(--mg-slate);
-    background-image: none;
+    text-decoration: none;
     padding-bottom: 0.3rem;
     white-space: nowrap;
     transition: color 0.25s ease;
@@ -193,7 +213,7 @@ header.mg-topbar {
     align-items: center;
     justify-content: center;
     background-color: var(--mg-mauve-wash);
-    background-image: none;
+    text-decoration: none;
     color: var(--mg-ink);
     border: 1px solid var(--mg-mauve);
     border-radius: 999px;
@@ -224,6 +244,48 @@ header.mg-topbar {
     width: 18px;
     height: 18px;
     fill: currentColor;
+}
+
+/* theme toggle: same pill treatment as the social icon buttons */
+
+.mg-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background-color: var(--mg-mauve-wash);
+    color: var(--mg-ink);
+    border: 1px solid var(--mg-mauve);
+    border-radius: 999px;
+    cursor: pointer;
+    font: inherit;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.mg-theme-toggle:hover {
+    background-color: var(--mg-ink);
+    border-color: var(--mg-ink);
+    color: var(--mg-cream);
+    transform: translateY(-1px);
+}
+
+.mg-theme-toggle .mg-social-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.mg-icon-moon {
+    display: none;
+}
+
+:root[data-theme="dark"] .mg-icon-sun {
+    display: none;
+}
+
+:root[data-theme="dark"] .mg-icon-moon {
+    display: block;
 }
 
 /* ------------------------------------------------------------------ main */
@@ -275,9 +337,9 @@ hr {
     border-radius: 50%;
     background: radial-gradient(
         circle,
-        rgba(144, 184, 0, 0.4) 0%,
-        rgba(38, 98, 16, 0.08) 55%,
-        rgba(38, 98, 16, 0) 75%
+        var(--mg-mauve-wash) 0%,
+        var(--mg-mauve-wash-soft) 55%,
+        transparent 75%
     );
     pointer-events: none;
     z-index: 0;
@@ -328,7 +390,9 @@ footer.mg-footer p {
 
     .mg-logo,
     .mg-topnav a::after,
-    .mg-topbar-actions a {
+    .mg-topbar-actions a,
+    .mg-theme-toggle,
+    body {
         transition: none;
     }
 }

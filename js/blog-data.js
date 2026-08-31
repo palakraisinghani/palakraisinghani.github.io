@@ -3,9 +3,27 @@
 // the blog listing page and each post's prev/next links are generated from it.
 const BLOG_POSTS = [
     {
+        id: "efficient-processing-dnn",
+        title: "Efficient Processing of DNNs",
+        url: "blog/Efficient_Processing_DNN/index.html",
+        date: "Sep 1, 2026",
+        tags: ["Concepts", "Technical", "Computer Architecture"],
+        desc: "TODO: one-line description for the blog listing card",
+        external: false
+    },
+    {
+        id: "seoul-bike-eda",
+        title: "Exploratory Data Analysis of the Rented Bike Count in Seoul",
+        url: "blog/seoul-bike-eda/index.html",
+        date: "Aug 30, 2026",
+        tags: ["Concepts", "Application", "Technical"],
+        desc: "Digging into the Seoul rented-bike-count dataset - demand patterns across weather, season, and time of day",
+        external: false
+    },
+    {
         id: "life-of-lots-of-pie",
         title: "Life of Lots of Pie",
-        url: "blog/Life_of_lots_of_pie.html",
+        url: "blog/life-of-lots-of-pie/index.html",
         date: "May 26, 2026",
         tags: ["Reflections"],
         desc: "About my JEE journey, hopefully insightful and motivating to JEE aspirants",
@@ -14,7 +32,7 @@ const BLOG_POSTS = [
     {
         id: "tale-that-tells-taste",
         title: "The Tale that tells Taste",
-        url: "blog/the_tale_that_tells_taste.html",
+        url: "blog/tale-that-tells-taste/index.html",
         date: "May 22, 2026",
         tags: ["Philosophy", "Reflections"],
         desc: "Expectations spoil the fun, very easily",
@@ -32,7 +50,7 @@ const BLOG_POSTS = [
     {
         id: "japan",
         title: "The Red Sun in the White Sky",
-        url: "blog/japan.html",
+        url: "blog/japan/index.html",
         date: "May 20, 2025",
         tags: ["Travel"],
         desc: "An account of my trip to Japan",

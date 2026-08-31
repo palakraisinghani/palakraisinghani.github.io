@@ -207,6 +207,146 @@
     color: var(--mg-ink);
 }
 
+/* -------------------------------------------------------- post content */
+/* generic content components (figures, tables, callouts, stats) that any
+   individual post can use, styled with the shared Marginalia tokens */
+
+.blog-post-lede {
+    font-family: var(--mg-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.3rem;
+    line-height: 1.5;
+    color: var(--mg-ink);
+    margin: 0 0 2.5rem 0;
+}
+
+main figure {
+    margin: 1.75rem 0;
+}
+
+main figure img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid var(--mg-line);
+}
+
+main figcaption {
+    font-family: var(--mg-mono);
+    font-size: 0.82rem;
+    color: var(--mg-ink-faint);
+    margin-top: 0.6rem;
+    line-height: 1.5;
+}
+
+.blog-figure-pair,
+.blog-figure-group-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin: 1.75rem 0;
+}
+
+.blog-figure-pair figure,
+.blog-figure-group-4 figure {
+    margin: 0;
+}
+
+.blog-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 1.5rem 0;
+}
+
+main table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+
+main th,
+main td {
+    text-align: left;
+    padding: 0.55rem 0.7rem;
+    border-bottom: 1px solid var(--mg-line);
+}
+
+main th {
+    background: var(--mg-mauve-wash-soft);
+    font-weight: 600;
+    color: var(--mg-ink);
+}
+
+main tbody tr:hover {
+    background: var(--mg-mauve-wash-soft);
+}
+
+.blog-callout {
+    background: var(--mg-mauve-wash-soft);
+    border-left: 3px solid var(--mg-ink);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+}
+
+.blog-callout p:last-child {
+    margin-bottom: 0;
+}
+
+.blog-stat-row {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
+}
+
+.blog-stat {
+    flex: 1 1 140px;
+    background: var(--mg-card);
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+}
+
+.blog-stat-num {
+    font-family: var(--mg-serif);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--mg-ink);
+}
+
+.blog-stat-label {
+    font-family: var(--mg-mono);
+    font-size: 0.78rem;
+    color: var(--mg-ink-faint);
+}
+
+.blog-flagged {
+    color: var(--mg-ink);
+    font-weight: 600;
+}
+
+.blog-ok {
+    color: var(--mg-ink-faint);
+}
+
+.blog-post-footnote {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--mg-line);
+    font-family: var(--mg-mono);
+    font-size: 0.85rem;
+    color: var(--mg-ink-faint);
+}
+
+@media (max-width: 860px) {
+    .blog-figure-pair,
+    .blog-figure-group-4 {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 860px) {
     .blog-shell {
         grid-template-columns: 1fr;
