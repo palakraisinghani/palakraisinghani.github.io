@@ -21,18 +21,113 @@
         <div class="blog-post-header" data-blog-id="efficient-processing-dnn"></div>
 
         <p>
-            I have largely been interested in the field of computer architecture. I recently hit a realization -  there is no meaning to computers if they don't make our life faster. This field of hardware optimizations, accelerators has rapidly evolved with the singular motivation of making computation faster cheaper and lesser without losing out on output accuracy and precision. Given the heavy demand for compute, optimization efforts have percolated every layer of the vertical compute chain. Recently I read a <a href="https://ieeexplore.ieee.org/document/8114708" target="_blank" rel="noopener noreferrer">paper</a> that reveals these multi-fold efforts for optimization made across different layers in the processing of deep neural networks.
+            A recent realization -  there is no meaning to computers if they don't make our life faster. This field of hardware optimizations, accelerators has rapidly evolved with the singular motivation of making computation faster cheaper and lesser without losing out on output accuracy and precision. Given the heavy demand for compute, optimization efforts have percolated every layer of the vertical compute chain. 
         </p>
 
         <p>
-            In this blog I aim to provide a synapse of what I read and understood. I will serve to provide a keyhole view to anyone lookin to tap the door to this rapidly progressing field. 
+            Recently I read a <a href="https://ieeexplore.ieee.org/document/8114708" target="_blank" rel="noopener noreferrer">paper</a> that reveals these multi-fold efforts for optimization made across different layers in the processing of deep neural networks. This blog aims to compress the 10k feet view. It will serve to provide a keyhole view to anyone looking to walk the door to this rapidly progressing field. 
         </p>
 
-        <p>Disclaimer: I am a student myself, so please pardon any shortcomings in my disposition of the contents</p>
+        <div class="blog-callout">
+            <p><strong>Disclaimer:</strong> I am but a humble student, cosplaying as someone who understands hardware. Corrections and Additions are welcome. Reach out via linkedIn! </p>
+        </div>
 
         <p>
             <strong>Neural Network: First Train then Inference</strong></br>
+           Models are charascterized by their architecture and parameter values. Parameter values are determined through a process called training. This is a long iterative process and there are several methods to speed up stabilize the process for example batching. Once training is complete the model is ready for use(inference). The resources and precision required for training is more than inference. Also inference is often carried out on embedded devices. This severely constraints compute capability and power. We explore a lot of techniques that have been introduced to reduce the size, computation power needed for inference while maintaining minimum accuracy loss.
+        </p>
 
+        <p>
+            <strong>Where can we cut (extra) cost?</strong></br>
+            <ul>
+                <li>
+                    Reduce Model Complexity
+                </li>
+                <li>
+                    Reduce Number of Operations
+                </li>
+                <li>
+                    Reduce Communication Cost
+                </li>
+                <li>
+                    Designing New Hardware
+                </li>
+            </ul>
+        </p>
+
+        <p>
+            Each of the above points are optimized on in several different way and we will look at them one by one.
+        </p>
+
+        <p>
+            <strong> Reducing Model Complexity - </strong></br>
+            Model Complexity refers to the effective capacity of models to represent and learn complex data patterns. Model complexity comes from non linear operations, number of parameters (model size), precision of model parameters and the most importantly the model architecture.</br>
+            <ul>
+                <li>Model Architecture and Model Size: </br>
+                    Depending on the task at hand, embedded devices should use models that are designed for the specific task and gauge the model size based on the complexity of the data they have to handle. Models can employ sparse connections and use dimensionality reduction to reduce complexity. Weight sharing and decomposing filters are popular methods to reduce model size. 
+                </li>
+                <li>Parameter Precision:</br>
+                    Reducing weight precision has been a popular way to simultaneously reduce both memory requirements and computation costs. The major drawback to this and the reason why one cannot indefinitely reduce preciosion is lack of accuracy. There do exist neural networks that work on binary or ternary weights. This method is called quantization. Normalizations are used to keep values from overflowing or underflowing limits. Precision is reduced for inference. Training : Gradient values accumulated over backpropogation are susceptible to accuracy loss on reduced precision.
+                </li>
+                <li>
+                    Pruning Models:</br>
+                    After an overparameterized model is trained, this method reduces model sizes and removes redundancy in weights. This is followed up with fine-tuning the remaining weights to make up for the lost accuracy. Coarse grained gruning can be more harmful to accuracy but facilitating better compression.
+                </li>
+                <li>
+                    Compressing Sparse Models for energy and area savings. Sparse models also reduce computation costs if their sparsity is well exploited. Sparsity can also arise from structured (coarse-grained) pruning.
+                </li>
+                <li>
+                    Knowledge Distillation:</br>
+                    Used to train smaller models from foundational models
+                </li>
+            </ul>
+        </p>
+        <p>
+            <strong> Reducing Number of Operations - </strong></br>
+            <ul>
+                <li>
+                    Algortihmic reductions:</br>
+                    Applying data transformations to reduce the number of operations needed eg Fast Fourier Transform. 
+                </li>
+                <li>
+                    Detecting Zero-Multiplications:</br>
+                    Can we null out small values? Can we detect and skip multiplication with zero? 
+                </li>
+            </ul>
+        </p>
+        <p>
+            <strong> Reducing Communication Cost - </strong></br>
+            <ul>
+                <li>
+                    Using full memory bandwidth: Coalesced and non-conflicting access to memory units to reduce latency and maximize utilization.
+                </li>
+                <li>
+                    Communication costs increase with distance and hence effort is directed towards making optimum use of memory closest to compute. Reducing memory accesses by maximizing data reusage in the compute before new data is pulled is the goal. Different algorithms that maximize reuse of different data elements like input activations, weights, partial results or combinations of these in different proportions are compared.
+                </li>
+            </ul>
+        </p>
+        <p>
+            <strong> Designing New Hardware - </strong></br>
+            <ul>
+                <li>
+                    Several neural networks are popular across fields and used heavily. Further the fixed architecture and lack of randomness allows the creation of fixed data workflows. Often a particular computation needs to be carried out many number of times. 
+                </li>
+                <li>Adding new hardware to support efficient computation of some model specific operation for example Multiply-an-Accumulate units.</li>
+                <li>
+                    New accelerators to speed Matrix multiplication, convolution, vector-matrix multiplications etc.
+                </li>
+                <li>
+                    Memory close to compute or compute in memory
+                </li>
+                <li>
+                    Temporal Vs Spatial Architectures
+                </li>
+            </ul>
+        </p>
+
+        <p>
+            <strong>Conclusion</strong></br>
+            Consider this blog less a polished essay and more a dump of dangling pointers - references, terms and half-formed threads that point at something worth dereferencing later. Pick any one of the bullets above and go chase it down a rabbit hole; Happy Wonderland!!
         </p>
 
         <!-- Previous/Next Blog links are filled in automatically based on
