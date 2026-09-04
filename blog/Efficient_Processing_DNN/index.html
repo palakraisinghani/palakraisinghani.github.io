@@ -67,18 +67,18 @@
                     Depending on the task at hand, embedded devices should use models that are designed for the specific task and gauge the model size based on the complexity of the data they have to handle. Models can employ sparse connections and use dimensionality reduction to reduce complexity. Weight sharing and decomposing filters are popular methods to reduce model size. 
                 </li>
                 <li>Parameter Precision:</br>
-                    Reducing weight precision has been a popular way to simultaneously reduce both memory requirements and computation costs. The major drawback to this and the reason why one cannot indefinitely reduce preciosion is lack of accuracy. There do exist neural networks that work on binary or ternary weights. This method is called quantization. Normalizations are used to keep values from overflowing or underflowing limits. Precision is reduced for inference. Training : Gradient values accumulated over backpropogation are susceptible to accuracy loss on reduced precision.
+                    Reducing weight precision has been a popular way to simultaneously reduce both memory requirements and computation costs. The major drawback to this and the reason why one cannot indefinitely reduce preciosion is lack of accuracy. There do exist neural networks that work on binary or ternary weights. This method is called quantization. Normalizations are used to keep values from overflowing or underflowing limits. Precision is reduced more for inference than for training process. This is because in training : rradient values accumulated over backpropogation are susceptible to accuracy loss on reduced precision sevrely impacting the accuracy of the model.
                 </li>
                 <li>
                     Pruning Models:</br>
-                    After an overparameterized model is trained, this method reduces model sizes and removes redundancy in weights. This is followed up with fine-tuning the remaining weights to make up for the lost accuracy. Coarse grained gruning can be more harmful to accuracy but facilitating better compression.
+                    After an overparameterized model is trained, this method reduces model sizes and removes redundancy in weights. This is followed up with fine-tuning the remaining weights to make up for the lost accuracy. Coarse grained pruning can be more harmful to accuracy while facilitating better compression which allow for higher memory savings and reduced computations.
                 </li>
                 <li>
-                    Compressing Sparse Models for energy and area savings. Sparse models also reduce computation costs if their sparsity is well exploited. Sparsity can also arise from structured (coarse-grained) pruning.
+                    Compressing Sparse Models for energy and area savings. How can sparse models be compressed efficiently? Sparse models also reduce computation costs if their sparsity is well exploited. Structured sparsity that arises from structured (coarse-grained) pruning allows greater savings than fine grained pruning.
                 </li>
                 <li>
                     Knowledge Distillation:</br>
-                    Used to train smaller models from foundational models
+                    This technique is used to train smaller models from foundational models allowing them to learn information faster and in a more compressed way. These are well suited for embedded devices.
                 </li>
             </ul>
         </p>
@@ -87,11 +87,11 @@
             <ul>
                 <li>
                     Algortihmic reductions:</br>
-                    Applying data transformations to reduce the number of operations needed eg Fast Fourier Transform. 
+                    Applying data transformations to reduce the number of operations needed. Eg. Fast Fourier Transform. 
                 </li>
                 <li>
                     Detecting Zero-Multiplications:</br>
-                    Can we null out small values? Can we detect and skip multiplication with zero? 
+                    Can we null out small values? Can we detect and skip multiplication with zero - thus saving power?
                 </li>
             </ul>
         </p>
@@ -110,17 +110,18 @@
             <strong> Designing New Hardware - </strong></br>
             <ul>
                 <li>
-                    Several neural networks are popular across fields and used heavily. Further the fixed architecture and lack of randomness allows the creation of fixed data workflows. Often a particular computation needs to be carried out many number of times. 
-                </li>
-                <li>Adding new hardware to support efficient computation of some model specific operation for example Multiply-an-Accumulate units.</li>
-                <li>
-                    New accelerators to speed Matrix multiplication, convolution, vector-matrix multiplications etc.
+                    Several neural networks are popular across fields and used heavily. Further the fixed architecture and lack of randomness allows the creation of fixed data workflows. 
                 </li>
                 <li>
-                    Memory close to compute or compute in memory
+                    Often a particular computation needs to be carried out many number of times. Adding new hardware to support efficient computation of some model specific operation for example Multiply-an-Accumulate units.</li>
+                <li>
+                    New accelerators to speed matrix multiplication, convolution, vector-matrix multiplications etc.
                 </li>
                 <li>
-                    Temporal Vs Spatial Architectures
+                    Memory close to compute or compute in memory to reduce communication cost and latency.
+                </li>
+                <li>
+                    Temporal Vs Spatial Architectures.
                 </li>
             </ul>
         </p>
