@@ -3,6 +3,15 @@
 // the blog listing page and each post's prev/next links are generated from it.
 const BLOG_POSTS = [
     {
+        id: "robot-rl",
+        title: "A Robot comes to Life with Reinforcement Learning",
+        url: "blog/RobotRL/index.html",
+        date: "Oct 5, 2026",
+        tags: ["Concepts", "Technical", "Research"],
+        desc: "Learning with trial and error. Balancing Exploration and Exploitation. Acting with Foresight.",
+        external: false
+    },
+    {
         id: "efficient-processing-dnn",
         title: "Efficient Processing of DNNs",
         url: "blog/Efficient_Processing_DNN/index.html",

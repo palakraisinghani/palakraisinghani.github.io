@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teaching a Robot to Deliver</title>
+<style>
+  :root {
+    --bg: #fbfaf8;
+    --surface: #ffffff;
+    --ink: #1b1a17;
+    --ink-secondary: #4b4a45;
+    --ink-muted: #85837c;
+    --border: #e6e3db;
+    --accent: #2a78d6;
+    --accent-2: #eb6834;
+    --accent-3: #1baf7a;
+    --radius: 10px;
+    --maxw: 820px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #171613;
+      --surface: #201f1b;
+      --ink: #ece9e2;
+      --ink-secondary: #c4c1b8;
+      --ink-muted: #8d8b83;
+      --border: #34322c;
+      --accent: #6fa8e8;
+      --accent-2: #f2925f;
+      --accent-3: #4fd39a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #171613;
+    --surface: #201f1b;
+    --ink: #ece9e2;
+    --ink-secondary: #c4c1b8;
+    --ink-muted: #8d8b83;
+    --border: #34322c;
+    --accent: #6fa8e8;
+    --accent-2: #f2925f;
+    --accent-3: #4fd39a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+  header.hero {
+    padding: 72px 20px 48px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  header.hero h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin: 0 0 14px;
+    letter-spacing: -0.02em;
+  }
+  header.hero p.tagline {
+    font-size: 1.15rem;
+    color: var(--ink-secondary);
+    max-width: 560px;
+    margin: 0 auto 22px;
+  }
+  header.hero p.byline {
+    font-size: 0.9rem;
+    color: var(--ink-muted);
+    margin: 0;
+  }
+  .links { margin-top: 24px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .links a {
+    font-size: 0.88rem;
+    text-decoration: none;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 999px;
+    transition: border-color .15s, color .15s;
+  }
+  .links a:hover { border-color: var(--accent); color: var(--accent); }
+
+  main { padding: 56px 20px 80px; }
+  section { margin-bottom: 68px; }
+  section h2 {
+    font-size: 1.5rem;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+  section h3 {
+    font-size: 1.1rem;
+    letter-spacing: -0.005em;
+    margin: 36px 0 8px;
+    padding-top: 4px;
+    border-top: 1px solid var(--border);
+  }
+  section h3:first-of-type { margin-top: 22px; border-top: none; padding-top: 0; }
+
+  section .kicker {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  section p { color: var(--ink-secondary); font-size: 1.02rem; }
+  section p.lede { font-size: 1.08rem; color: var(--ink); }
+
+  figure { margin: 28px 0; text-align: center; }
+  figure img { max-width: 100%; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); }
+  figcaption { font-size: 0.85rem; color: var(--ink-muted); margin-top: 10px; max-width: 560px; margin-left: auto; margin-right: auto; }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .gallery figure { margin: 0; }
+  .gallery img { width: 100%; display: block; }
+  .gallery-equal-height {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .gallery-equal-height figure { flex: 0 1 auto; max-width: 100%; }
+  .gallery-equal-height img { width: auto; height: 260px; max-width: 100%; display: block; margin: 0 auto; }
+  @media (max-width: 500px) {
+    .gallery-equal-height img { height: auto; width: 100%; }
+  }
+  @media (max-width: 620px) {
+    .gallery { grid-template-columns: 1fr; }
+  }
+
+  .gallery-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 28px 0;
+  }
+  .gallery-3 figure { margin: 0; }
+  .gallery-3 img { width: 100%; display: block; }
+  @media (max-width: 700px) {
+    .gallery-3 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 460px) {
+    .gallery-3 { grid-template-columns: 1fr; }
+  }
+
+  .carousel-breakout {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 1140px;
+    margin: 28px 0;
+  }
+  .carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px;
+  }
+  .carousel-viewport {
+    flex: 1;
+    overflow: hidden;
+  }
+  .carousel-track {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 4px 14% 4px;
+  }
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .carousel-slide {
+    flex: 0 0 72%;
+    scroll-snap-align: center;
+    margin: 0;
+    opacity: 0.32;
+    transform: scale(0.92);
+    transition: opacity .35s ease, transform .35s ease;
+  }
+  .carousel-slide.active { opacity: 1; transform: scale(1); }
+  .carousel-slide img { width: 100%; display: block; border-radius: var(--radius); }
+  .carousel-slide figcaption { font-size: 0.88rem; margin-top: 10px; }
+  .carousel-slide .ep-label {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .carousel-arrow {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color .15s, color .15s;
+    z-index: 2;
+  }
+  .carousel-arrow:hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 760px) {
+    .carousel-slide { flex-basis: 84%; }
+    .carousel-track { padding-left: 8%; padding-right: 8%; }
+  }
+  @media (max-width: 480px) {
+    .carousel-slide { flex-basis: 92%; }
+    .carousel-arrow { width: 34px; height: 34px; font-size: 1.1rem; }
+  }
+
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin: 24px 0;
+    font-size: 0.98rem;
+    color: var(--ink-secondary);
+  }
+  .callout strong { color: var(--ink); }
+
+  .divider { height: 1px; background: var(--border); border: none; margin: 0 0 56px; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 20px 60px;
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 0.88rem;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.9em;
+  }
+
+  .eqn-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 18px 0;
+    overflow-x: auto;
+  }
+  .eqn-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+  .variant-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin: 22px 0;
+  }
+  .variant-card h3 {
+    margin: 0 0 4px;
+    font-size: 1.1rem;
+  }
+  .variant-card .cite {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    margin: 0 0 14px;
+  }
+  .variant-card p { margin: 10px 0; }
+  .variant-card .verdict {
+    font-size: 0.92rem;
+    border-left: 3px solid var(--accent-2);
+    padding-left: 14px;
+    margin-top: 14px;
+    color: var(--ink-secondary);
+  }
+
+  .intro-box {
+    background: linear-gradient(180deg, var(--surface), var(--bg));
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 30px;
+    margin: 48px 0 64px;
+  }
+  .intro-box .kicker { margin-bottom: 10px; }
+  .intro-box h2 { margin: 0 0 12px; font-size: 1.3rem; }
+  .intro-box p { margin: 10px 0; font-size: 0.98rem; }
+  .intro-box .rl-loop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 18px 0 20px;
+    font-size: 0.86rem;
+    color: var(--ink-secondary);
+  }
+  .intro-box .rl-loop span.node {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .intro-box .rl-loop span.arrow { color: var(--ink-muted); font-size: 1rem; }
+
+  .color-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin: 20px 0 8px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .color-legend .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.86rem;
+    color: var(--ink-secondary);
+  }
+  .color-legend .swatch {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: 3.5fr 1fr;
+    gap: 16px;
+    margin: 24px 0 6px;
+    align-items: stretch;
+  }
+  .scenario-grid figure { margin: 0; }
+  .scenario-grid .hero img { width: 100%; height: auto; display: block; }
+  .scenario-small {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .scenario-small figure { flex: 1; display: flex; flex-direction: column; }
+  .scenario-small img { width: 100%; display: block; height: auto; object-fit: contain; }
+  .scenario-small figcaption { margin-top: 6px; }
+  @media (max-width: 640px) {
+    .scenario-grid { grid-template-columns: 1fr; }
+    .scenario-small { flex-direction: row; }
+  }
+
+  p.caption-note {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    margin-top: 4px;
+  }
+
+  .stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.92rem;
+  }
+  .stats-table th, .stats-table td {
+    text-align: right;
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .stats-table th:first-child, .stats-table td:first-child { text-align: left; }
+  .stats-table thead th {
+    color: var(--ink-muted);
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--border);
+  }
+  .stats-table tbody tr:last-child td { border-bottom: none; }
+  .stats-table td:first-child { font-weight: 600; }
+  .stats-table-wrap { overflow-x: auto; }
+
+  .param-groups {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 18px 0 26px;
+  }
+  .param-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .param-group h4 {
+    margin: 0 0 10px;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .param-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+  .param-list li { font-size: 0.88rem; color: var(--ink-secondary); }
+  .param-note { color: var(--ink-muted); font-size: 0.85em; }
+  @media (max-width: 600px) {
+    .param-groups { grid-template-columns: 1fr; }
+  }
+
+  .arrow-list {
+    list-style: none;
+    margin: 20px 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .arrow-list li {
+    position: relative;
+    padding-left: 28px;
+    font-size: 1rem;
+    color: var(--ink-secondary);
+  }
+  .arrow-list li::before {
+    content: "\2192";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+  .arrow-list li strong { color: var(--ink); }
+</style>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>A Robot comes to Life with Reinforcement Learning</h1>
+    <p class="tagline">Learning with trial and error. Balancing Exploration and Exploitation. Acting with Foresight.</p>
+    <p class="byline">Course project &middot; Applied Data Science and Artificial Intelligence (UMC301), IISc. Fall 2026</p>
+    <div class="links">
+      <a href="assets/report.pdf">Full report (PDF)</a>
+      <a href="https://github.com/palakraisinghani/RobotRoll">Code &amp; repo</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<div class="intro-box">
+  <div class="kicker">Starting from the start</div>
+  <h2>What is "Reinforcement Learning" </h2>
+  <p>Reinforcement learning is trial-and-error at scale: an <strong>agent</strong> (the robot) looks at its current <strong>state</strong> (what it can see, its battery level), takes an <strong>action</strong> (move, or stay put), and receives a <strong>reward</strong> &mdash; a number telling it whether that was a good idea or a bad one. Often the effect of an action may yield a reward after a long time. The agent's job is to learn a <strong>policy</strong> &mdash; a rule for picking actions &mdash; that maximizes reward summed over an entire episode, not just the next step.</p>
+  <div class="rl-loop">
+    <span class="node">Agent observes state</span>
+    <span class="arrow">&rarr;</span>
+    <span class="node">picks an action</span>
+    <span class="arrow">&rarr;</span>
+    <span class="node">environment responds</span>
+    <span class="arrow">&rarr;</span>
+    <span class="node">reward + new state</span>
+    <span class="arrow">&rarr;</span>
+    <span class="node">repeat</span>
+  </div>
+  <p>This project uses one specific family of RL algorithm: <strong>Q-learning</strong>, which doesn't learn a policy directly but instead learns to estimate a <strong>Q-value</strong> &mdash; the expected future reward of taking a given action in a given state, then acting optimally afterward. Once you have good Q-value estimates, the policy is trivial: always take the action with the highest one except when exploring, the agent picks a random action. <strong>Deep</strong> Q-learning (DQN) is just that idea with a neural network trained to estimate Q-value for a combination of state,action. The state space here  with moving pedestrians and a draining battery &mdash; is far too large to ever tabulate by hand and the neural network fits in well to fill the gap. Everything below is about what it actually takes to make that work in practice. 
+  </p>
+  <p>The important part of any RL model is the reward signal and how it is being used to update the policy. Exploration, exploitation, Policy and target network, replay buffer, etc are some important concepts that get covered in the blog.</p>
+</div>
+
+<section id="setup">
+  <div class="kicker">The Environment Setup</div>
+  <h2>What can it sense and feel?</h2>
+  <p class="lede">The robot sees a small 10 X 10 window around itself &mdash; not the whole map &mdash; and has to reach a goal cell that moves every episode, without draining its battery or colliding with anything along the way. Before every move the robot sees the state of the environment along with the reward signal on its previous move. It then consults its learned policy and picks the next action. This loop repeats.</p>
+  <p>Obstacles are fixed; pedestrians wander with momentum. The battery drains with every move, and running it to zero ends the episode early &mdash; so efficiency isn't optional, it's structural. The model is trained in 4 difficulty scenarios where grid size, obstacle density, pedestrian density and step budget all scale together. 
+
+  </p>
+
+  <div class="color-legend">
+    <span class="legend-item"><span class="swatch" style="background:#2980b9"></span>Robot at starting location</span>
+    <span class="legend-item"><span class="swatch" style="background:#27ae60"></span>Goal</span>
+    <span class="legend-item"><span class="swatch" style="background:#333333"></span>Obstacle</span>
+    <span class="legend-item"><span class="swatch" style="background:#e74c3c"></span>Pedestrian</span>
+  </div>
+
+  <div class="scenario-grid">
+    <figure class="hero">
+      <img src="assets/scenario_medium.png" alt="Medium difficulty scenario, fresh episode reset">
+      <figcaption>Medium &mdash; the scenario used throughout the rest of this post.</figcaption>
+    </figure>
+    <div class="scenario-small">
+      <figure>
+        <img src="assets/scenario_easy.png" alt="Easy difficulty scenario, fresh episode reset">
+        <figcaption>Easy</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/scenario_hard.png" alt="Hard difficulty scenario, fresh episode reset">
+        <figcaption>Hard</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/scenario_expert.png" alt="Expert difficulty scenario, fresh episode reset">
+        <figcaption>Expert</figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="caption-note">Same generation logic, different density &mdash; grid size, obstacle count, and pedestrian count all scale up together from Easy to Expert.</p>
+</section>
+
+<section id="demos">
+ 
+  <h2>Four difficulties &mdash; and "easier environment" doesn't mean "learns faster"</h2>
+  <p class="lede">The same network architecture and training recipe was pointed at four grid worlds of increasing density &mdash; more obstacles, more pedestrians, a bigger map, a longer episode. Below is the trained agent, live, on each.</p>
+  <div class="gallery">
+    <figure>
+      <img src="assets/live_demo_easy.gif" alt="Trained agent navigating the easy scenario" loading="lazy">
+      <figcaption>Easy &mdash; smallest grid, no pedestrians. The baseline case.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/live_demo_medium.gif" alt="Trained agent navigating the medium scenario" loading="lazy">
+      <figcaption>Medium &mdash; pedestrians enter the picture.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/live_demo_hard.gif" alt="Trained agent navigating the hard scenario" loading="lazy">
+      <figcaption>Hard &mdash; denser obstacles, more foot traffic, a longer walk.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/live_demo_expert.gif" alt="Trained agent navigating the expert scenario" loading="lazy">
+      <figcaption>Expert &mdash; the largest, most crowded map tested.</figcaption>
+    </figure>
+  </div>
+  <p>For each difficulty level a model was trained from scratch. The model at the 150th learning episode has been captured above.</p>
+  <p>The intuitive guess is that the easiest map should also be the one the agent learns fastest on. The data says the opposite: Easy is actually the <em>slowest</em> scenario to get off the ground, while Medium, Hard, and Expert all reach strong success rates at least as fast. The likely reason is that "easier" and "more informative" aren't the same thing. A near-empty map gives the agent very little to learn from early on &mdash; its local view is mostly blank, and it rarely collides with anything, so there's little negative signal teaching it what to avoid. A denser map puts obstacles and pedestrians in view more often and triggers collisions more frequently while the policy is still close to random, which is a noisier but <em>denser</em> stream of feedback about what not to do. More signal, sooner, even if each individual episode is harder to fully solve. (This project never isolated scenario density as its own controlled variable, so this is a plausible reading of the pattern rather than a proven causal claim.)</p>
+
+  <div class="stats-table-wrap">
+    <table class="stats-table">
+      <thead>
+        <tr>
+          <th>Scenario</th>
+          <th>Success (ep 0&ndash;50)</th>
+          <th>Success (ep 100&ndash;150)</th>
+          <th>Success (ep 250&ndash;300)</th>
+          <th>Final avg reward</th>
+          <th>Final avg collisions/ep</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Easy</td><td>14%</td><td>92%</td><td>98%</td><td>155.4</td><td>1.16</td></tr>
+        <tr><td>Medium</td><td>20%</td><td>98%</td><td>94%</td><td>162.7</td><td>0.36</td></tr>
+        <tr><td>Hard</td><td>20%</td><td>96%</td><td>82%</td><td>120.2</td><td>2.72</td></tr>
+        <tr><td>Expert</td><td>24%</td><td>96%</td><td>94%</td><td>153.7</td><td>1.42</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="gallery">
+    <figure>
+      <img src="assets/comparison_success_demo.png" alt="Success rate comparison across all four scenarios">
+      <figcaption>Success rate, 25-episode rolling average, all four scenarios overlaid.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/comparison_collisions_demo.png" alt="Collisions per episode comparison across all four scenarios">
+      <figcaption>Collisions per episode &mdash; note Hard's late spike.</figcaption>
+    </figure>
+  </div>
+
+  <p class="caption-note">One training run per scenario, 300 episodes, fixed seed &mdash; not seed-averaged like the ablation study taht follows soon, so treat exact numbers as indicative rather than definitive. Hard's late-training dip (82%) alongside its highest final collision rate (2.72/episode) is a separate late-training stability issue, not slow initial learning.</p>
+</section>
+
+<section id="progress">
+  <div class="kicker">Learning over time</div>
+  <h2>Watching one policy go from random to competent</h2>
+  <p class="lede">All four clips above are the <em>same</em> fixed snapshot &mdash; the policy at episode 150. The more interesting question is what the same scenario looks like at different points <em>during</em> training. Here's the medium scenario, same map-generation logic, same agent, captured at five points across a single 300-episode run. The model starts from making random guesses and slowly reduces e</p>
+  <div class="carousel-breakout">
+    <div class="carousel">
+      <button type="button" class="carousel-arrow" id="progress-prev" aria-label="Previous episode">&#8249;</button>
+      <div class="carousel-viewport">
+        <div class="carousel-track" id="progress-track">
+          <figure class="carousel-slide">
+            <span class="ep-label">Episode 0</span>
+            <img src="assets/progress_medium_ep000.gif" alt="Medium scenario at episode 0" loading="lazy">
+            <figcaption>Pure exploration. No sense yet of where the goal is or what to avoid.</figcaption>
+          </figure>
+          <figure class="carousel-slide">
+            <span class="ep-label">Episode 50</span>
+            <img src="assets/progress_medium_ep050.gif" alt="Medium scenario at episode 50" loading="lazy">
+            <figcaption>Still mostly wandering, with the faintest early pull toward the goal.</figcaption>
+          </figure>
+          <figure class="carousel-slide">
+            <span class="ep-label">Episode 150</span>
+            <img src="assets/progress_medium_ep150.gif" alt="Medium scenario at episode 150" loading="lazy">
+            <figcaption>A visibly more direct route, though still hesitant around obstacles.</figcaption>
+          </figure>
+          <figure class="carousel-slide">
+            <span class="ep-label">Episode 200</span>
+            <img src="assets/progress_medium_ep200.gif" alt="Medium scenario at episode 200" loading="lazy">
+            <figcaption>Obstacle and pedestrian avoidance looks deliberate, not lucky.</figcaption>
+          </figure>
+          <figure class="carousel-slide">
+            <span class="ep-label">Episode 250</span>
+            <img src="assets/progress_medium_ep250.gif" alt="Medium scenario at episode 250" loading="lazy">
+            <figcaption>A direct, efficient delivery &mdash; close to converged behavior.</figcaption>
+          </figure>
+        </div>
+      </div>
+      <button type="button" class="carousel-arrow" id="progress-next" aria-label="Next episode">&#8250;</button>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var track = document.getElementById('progress-track');
+      var slides = Array.prototype.slice.call(track.querySelectorAll('.carousel-slide'));
+      var idx = 0;
+
+      function go(i) {
+        idx = Math.max(0, Math.min(slides.length - 1, i));
+        slides[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+
+      document.getElementById('progress-prev').addEventListener('click', function () { go(idx - 1); });
+      document.getElementById('progress-next').addEventListener('click', function () { go(idx + 1); });
+
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            entry.target.classList.toggle('active', entry.intersectionRatio > 0.6);
+            if (entry.intersectionRatio > 0.6) {
+              idx = slides.indexOf(entry.target);
+            }
+          });
+        }, { root: track, threshold: [0.6] });
+        slides.forEach(function (s) { observer.observe(s); });
+      } else {
+        slides[0].classList.add('active');
+      }
+    })();
+  </script>
+  <p>Nothing qualitatively new happens in the algorithm between these five clips &mdash; it's the same $\varepsilon$-greedy training loop at different time-steps. Double DQN (a kind of Q-learning we will cover soon) taking the same kind of gradient step after every move. What changes is purely a function of accumulated experience: enough transitions have passed through the replay buffer that the Q-value estimates have gone from arbitrary to roughly correct. The interesting part isn't that performance improves &mdash; that's the whole point of training &mdash; it's <em>how early</em> the improvement is visible once the observation actually contains enough information to act on - information comes from state vi</p>
+</section>
+
+<section id="agent">
+  <div class="kicker">The agent</div>
+  <h2>The architecture, target and policy network, and a lot of exploration</h2>
+  <h3>The Architecture</h3>
+  <p class="lede">The robot's local view goes through a convolutional stack; that gets concatenated with a handful of global features (battery, distance and direction to goal) and fed through a couple of fully-connected layers to produce one Q-value per action.</p>
+  <figure>
+    <img src="assets/network_architect.png" alt="Network architecture diagram">
+    <figcaption>Local view &rarr; conv stack &rarr; concat with global features &rarr; fully-connected head &rarr; Q-values.</figcaption>
+  </figure>
+  <h3>RL Training and Inference Loop</h3>
+  <div class="gallery gallery-equal-height">
+    <figure>
+      <img src="assets/training_loop.png" alt="Training loop diagram: observe state, act epsilon-greedy, environment responds, remember, replay, repeat">
+      <figcaption>Training &mdash; runs every step inside an episode. <em>Remember</em> and <em>Replay</em> keep the network learning; &epsilon; only decays once the episode ends.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/inferenceloop.png" alt="Inference loop diagram: observe state, act epsilon-greedy, environment responds, repeat">
+      <figcaption>Inference &mdash; what the live clips above actually run. Same <code>act()</code> call with exploration off, no <em>Remember</em> or <em>Replay</em>, no learning.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Replay Buffer and Why?</h3>
+  <p>The replay buffer is a fixed-size, first-in-first-out store of past transitions &mdash; (state, action, reward, next state, done) tuples &mdash; that the agent samples from at random rather than training directly on the live stream of experience as it happens. Two reasons this matters. 
+    <ul>
+      <li><strong>Decorrelation</strong>: consecutive steps in an episode are highly similar (the robot a moment later is in nearly the same spot, facing nearly the same obstacles), so training on them in order feeds the network a stream of near-duplicate, correlated examples &mdash; sampling randomly from a large buffer breaks that correlation, closer to the i.i.d. assumption most gradient-based learning relies on.
+      </li>
+      <li><strong>Reuse</strong>: without a buffer, each transition would be used for exactly one gradient update and then discarded; with a replay buffer, a single transition can be resampled and learned from many times before it eventually ages out, which matters a lot when transitions (especially the rare, informative ones &mdash; a collision, a delivery) are expensive to collect.
+      </li>
+    </ul> 
+  </p>
+
+  <h3>Q-Learning Double Q-Learning</h3>
+  <p><strong>Q-learning</strong>, at its core, doesn't try to learn a policy directly &mdash; it tries to learn a <strong>Q-value</strong>: the expected total future reward of taking a given action in a given state, then acting optimally from there on. In any state, just take whichever action has the highest Q-value. The classic version keeps these estimates in a table, one row per state-action pair, updated a little at a time toward each new experience.</p>
+  <p>A table stops being an option the moment the state space gets large &mdash; there's no way to enumerate a row for every possible grid configuration this robot could encounter. <strong>DQN</strong> (Deep Q-Network) replaces the table with a neural network.</p>
+  <p>Training that network means giving it something to regress toward, and that's where a second network enters: a <strong>policy network</strong> that's updated every step, and a <strong>target network</strong> &mdash; a periodically-synced, temporarily-frozen copy &mdash; that supplies a stable target for the policy network to chase. Exactly how those two networks divide the work of picking and scoring the next action is the one-line difference between plain DQN and the Double DQN used here, and it's worth seeing precisely why that difference matters. The <a href="#dqn-math">section below</a> walks through it with the actual equations.</p>
+</section>
+
+<section id="dqn-math">
+  <div class="kicker">A closer look</div>
+  <h2>From Q-learning to Double DQN, in three equations</h2>
+  <p class="lede">Three successive fixes, each one patching a specific failure mode in the one before it. The notation: $\theta$ is the online/policy network's weights, $\theta^-$ is the target network's weights (a lagged copy of $\theta$).</p>
+
+  <div class="variant-card">
+    <h3>1. Standard (online) Q-learning</h3>
+    <p class="cite">Watkins &amp; Dayan, 1992 &mdash; tabular Q-learning, and its naive deep-network extension</p>
+    <p>The classic update rule nudges $Q(s,a)$ toward the observed reward plus the discounted value of the best next action:</p>
+    <div class="eqn-block">
+      <div class="eqn-label">Tabular update</div>
+      $$Q(s,a) \leftarrow Q(s,a) + \alpha\Big[r + \gamma \max_{a'} Q(s',a') - Q(s,a)\Big]$$
+    </div>
+    <p>Replace the table with a neural network $Q(s,a;\theta)$ and the same idea becomes a regression problem: minimize the squared difference between $Q(s,a;\theta)$ and a bootstrapped target built from that <em>same</em> network:</p>
+    <div class="eqn-block">
+      <div class="eqn-label">Naive deep Q-learning loss</div>
+      $$\mathcal{L}(\theta) = \mathbb{E}\Big[\big(\underbrace{r + \gamma \max_{a'} Q(s',a';\theta)}_{\text{target } y} - Q(s,a;\theta)\big)^2\Big]$$
+    </div>
+    <p class="verdict"><strong>The moving-target problem.</strong> $y$ is computed with the exact same weights $\theta$ that the gradient step is about to change. Every update shifts the thing being regressed toward, which shifts $y$ again on the next step &mdash; the optimization target is non-stationary by construction. Combined with correlated, non-i.i.d. samples from a single trajectory, this is prone to oscillation or outright divergence rather than clean convergence.</p>
+  </div>
+
+  <div class="variant-card">
+    <h3>2. Nature DQN</h3>
+    <p class="cite">Mnih et al., 2015 &mdash; "Human-level control through deep reinforcement learning," <em>Nature</em></p>
+    <p>The fix: freeze a second copy of the network, $\theta^-$, and use <em>it</em> to compute the target, syncing $\theta^- \leftarrow \theta$ only every $C$ steps (this project's <code>target_update_freq</code>):</p>
+    <div class="eqn-block">
+      <div class="eqn-label">Fixed Q-targets</div>
+      $$y = r + \gamma \max_{a'} Q(s',a';\theta^-)$$
+    </div>
+    <p>Because $\theta^-$ doesn't move between syncs, $y$ is stable for long enough that gradient descent on $\theta$ can actually make progress against it &mdash; this is what resolves the moving-target problem above, and it's the target network already described earlier in this post.</p>
+    <p class="verdict"><strong>But it introduces a new bias: overestimation.</strong> Look closely at $\max_{a'} Q(s',a';\theta^-)$: the <em>same</em> frozen network both picks which next action looks best (the $\arg\max$ hiding inside that $\max$) and reports how good that action is. $Q(s',\cdot\,;\theta^-)$ is a noisy estimate &mdash; some actions' values are overestimated by approximation error, some underestimated. Taking a $\max$ over noisy estimates is a biased estimator of the true maximum ($\mathbb{E}[\max_a \hat Q(s,a)] \ge \max_a \mathbb{E}[\hat Q(s,a)]$, by Jensen's inequality): the operation preferentially <em>selects</em> whichever action currently looks inflated, and then <em>trusts that same inflated number</em> as the value to bootstrap from. Through repeated bootstrapping, that optimism compounds over training rather than averaging out.</p>
+  </div>
+
+  <div class="variant-card">
+    <h3>3. Double DQN</h3>
+    <p class="cite">van Hasselt, Guez &amp; Silver, 2016 &mdash; "Deep Reinforcement Learning with Double Q-learning," AAAI (building on van Hasselt, 2010)</p>
+    <p>The fix is a one-line change: keep two networks, but split the two jobs the $\max$ was quietly doing in one line into two separate steps, using a <em>different</em> network for each:</p>
+    <div class="eqn-block">
+      <div class="eqn-label">Decoupled selection / evaluation</div>
+      $$y = r + \gamma\, Q\big(s',\ \underbrace{\arg\max_{a'} Q(s',a';\theta)}_{\text{select with policy net}}\ ;\ \theta^-\big)$$
+    </div>
+    <p>The <strong>policy network</strong> ($\theta$) picks which action it currently thinks is best. The <strong>target network</strong> ($\theta^-$) &mdash; a different, lagged set of weights, trained on different recent experience &mdash; independently scores how good that specific action actually is. This is exactly what's implemented in <code>agent.py</code>'s <code>replay()</code>.</p>
+    <p class="verdict"><strong>Why selecting and evaluating with different networks cancels the bias instead of compounding it.</strong> The overestimation in Nature DQN happens because one network's own noise is both the reason an action gets picked <em>and</em> the number used to trust it &mdash; selection error and evaluation error are perfectly correlated, since they're the same number read twice. Once selection and evaluation come from two different, only weakly-correlated networks, that correlation breaks: $\theta$ might overvalue some action and select it, but $\theta^-$ has its own independent noise and has no particular reason to agree &mdash; it might score that same action lower, or another action's error might go the other way on a different transition. Averaged over many updates, these independent errors push in both directions roughly as often as not, so they average out instead of all pointing the same way. It's the same logic as the original tabular Double Q-learning result: two independently-noisy estimators, one nominating and one confirming, don't inherit each other's optimism &mdash; a biased <em>single</em> estimator used twice does.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="bug">
+  <div class="kicker">What went wrong first</div>
+  <h2>The Robot couldn't tell Which way the Goal was -  The Case of Not Knowing enough</h2>
+  <p class="lede">An early training run with lesser observable environmental features just&hellip; didn't learn. Reward stayed flat, success rate stayed near zero, no matter how long it trained. Without the dr, dc: normalised (row, column) displacement vector from goal position, the robot doesn't know where to go, unless the goal enters its local view.</p>
+  <p>Without this sense of direction of the goal, two completely different episodes could produce an identical observation while demanding opposite actions, depending on which side of the robot the goal happened to be on. No amount of extra training fixes that: the observation itself didn't carry enough information to act correctly. Adding a normalized direction vector to the global features resolved it immediately. The Model can learn to observe and respond to this added - useful - state information.</p>
+  <figure>
+    <img src="assets/ablation_tier0_num_global_features_success.png" alt="Success rate with and without the direction signal">
+    <figcaption>Same agent, same map &mdash; the only difference is whether the observation includes a direction to the goal.</figcaption>
+  </figure>
+  <div class="callout">This became the first data point in a broader lesson that shows up again and again below: a model that isn't learning is often not a model problem at all &mdash; it's an information problem.</div>
+</section>
+
+<section id="ablation">
+  <div class="kicker">What actually mattered</div>
+  <h2>Seventeen hyperparameters, ranked by how much they matter</h2>
+  <p class="lede">Every exposed hyperparameter &mdash; from learning rate to network depth to how erratically pedestrians move &mdash; was swept independently, three seeds each, to separate a genuine effect from training noise. Ranking all of them by effect size rather than by which tier they happened to be tested in produced a clean, if slightly surprising, picture.</p>
+  <figure>
+    <img src="assets/ablation_synthesis_ranking.png" alt="Cross-tier ranking of all 17 ablated hyperparameters by effect size">
+    <figcaption>All 17 hyperparameters, ranked by best&ndash;worst success rate across their tested range.</figcaption>
+  </figure>
+  <p>A small handful of choices are existential &mdash; remove them and the task collapses. Everything else is comparatively cosmetic, moving performance at the margins without ever threatening whether the robot learns at all.</p>
+  <div class="gallery-3">
+    <figure>
+      <img src="assets/ablation_tier2_use_double_dqn_success.png" alt="Success with and without Double DQN">
+      <figcaption>Double DQN vs. vanilla DQN.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/ablation_tier3_reward_progress_scale_success.png" alt="Success across reward shaping magnitudes">
+      <figcaption>Reward shaping: present or absent.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/ablation_tier1_learning_rate_success.png" alt="Success across learning rates">
+      <figcaption>Learning rate: mild sensitivity.</figcaption>
+    </figure>
+  </div>
+  <p>The reward-shaping result is the more interesting of the two headline effects. <code>reward_progress_scale</code> weights a dense, per-step term added to the reward every single step, not just at delivery:</p>
+  <div class="eqn-block">
+    <div class="eqn-label">Progress-shaping term</div>
+    $$\text{reward} \mathrel{+}= \texttt{reward_progress_scale} \times (\text{prev_distance} - \text{new_distance})$$
+  </div>
+  <p>Positive when the robot's Manhattan distance to the goal shrank that step, negative when it grew, zero on a <code>STAY</code> &mdash; at the default scale of 1.0, moving one cell closer is worth +1. The ablation finding isn't about magnitude at all: any non-zero scale (0.5, 1.0, 2.0) works about equally well, and the only thing that collapses the task is removing the term entirely (scale = 0). The signal has to exist; its exact size barely matters. Meanwhile a long tail of hyperparameters &mdash; network width and depth, batch size, battery tightness, view size &mdash; turned out to be robust across the whole range tested, which is itself a useful, if less dramatic, finding: it says where tuning effort is <em>not</em> worth spending.</p>
+</section>
+
+<hr class="divider">
+
+<section id="bayesopt">
+  <div class="kicker">Searching smarter</div>
+  <h2>What a joint hyperparameter search found &mdash; and broke</h2>
+  <p class="lede">Independent ablation studies the effect of each parameter individually on some objective or multi-objective function. Simply pooling the best hyperparameter values obtained from the ablation study will not give us the best overall hyperparameter combinations since we would be basing our choice on the assumption on the independence of hyperparameters. This demands a search over the hyper parameter space. We shortlist the following 9 hyperparameters observed to be consequential in the ablation study.</p>
+
+  <div class="param-groups">
+    <div class="param-group">
+      <h4>Tier 1 &mdash; Core DQN</h4>
+      <ul class="param-list">
+        <li><code>learning_rate</code></li>
+        <li><code>gamma</code> (&gamma;)</li>
+        <li><code>epsilon_decay</code> (&epsilon;-decay)</li>
+        <li><code>batch_size</code></li>
+        <li><code>target_update_freq</code></li>
+        <li><code>replay_buffer_size</code></li>
+      </ul>
+    </div>
+    <div class="param-group">
+      <h4>Tier 3 &mdash; Reward shaping</h4>
+      <ul class="param-list">
+        <li><code>reward_progress_scale</code></li>
+        <li><code>reward_delivery</code></li>
+        <li><code>collision_penalty</code> <span class="param-note">(composite &mdash; sets both the obstacle and pedestrian collision rewards together)</span></li>
+      </ul>
+    </div>
+  </div>
+  <p class="caption-note">Core DQN and reward shaping are the two groups most plausibly coupled &mdash; reward magnitude sets the scale of the error signal the network trains on, so it directly interacts with how big a learning-rate step or how stale a target network can be. Network architecture and environment-capacity hyperparameters (Tiers 4&ndash;5) were left out of the joint search for the same reason: nothing in the ablation results suggested they interact with reward scale the way these two tiers do.</p>
+
+  <p>The search's objective was deliberately simple: <strong>maximize final success rate</strong>, with a tiny bonus for higher episode reward used only to break ties between otherwise-equal trials. Each of the 100 trials trained a fresh agent from scratch on one sampled combination of the 9 hyperparameters above and reported back how well it did &mdash; that single number is all the search ever optimized for.</p>
+  <figure>
+    <img src="assets/bayes_convergence.png" alt="Bayesian search convergence over trials">
+    <figcaption>Best score found so far, trial by trial &mdash; the search concentrates on promising regions instead of sampling blindly.</figcaption>
+  </figure>
+  <p>On that objective, the search worked: the top-ranked trials were retrained for real (3 seeds, full 300-episode budget, not the shortened single-seed budget used during search) to confirm the picks weren't just lucky noise, and every one of them converged to a high success rate dramatically faster than anything an independent, per-tier sweep had found &mdash; real evidence that core-DQN and reward-shaping hyperparameters do interact.</p>
+  <p>But the same confirmation run exposed what the objective never measured: <strong>reward stability</strong>. Every one of the top-ranked candidates came back 3&ndash;8&times; noisier (in reward signal), episode to episode, than the plain defaults &mdash; because "maximize success rate" has nothing to say about how consistently that success is achieved. A model that looks fine on average while its outcomes swing wildly per episode isn't actually reliable, and that's exactly the failure mode a single success-rate number hides: the objective had no way to tell a smooth 95%-success policy apart from an erratic one that also happens to land on 95%.</p>
+  <div class="callout"><strong>The fix wasn't a bigger search &mdash; it was a better question.</strong> Re-running the same search as a genuine multi-objective problem (success rate <em>and</em> reward stability, scored and optimized separately rather than collapsed into one number) surfaced a configuration that matched the original search's best speed and success rate while being over an order of magnitude more stable.</div>
+  <figure>
+    <img src="assets/pareto_front.png" alt="Pareto front from the multi-objective search">
+    <figcaption>Success rate vs. reward stability across every trial &mdash; The Pareto frontier refers to the set of non-dominated points in the multiobjective space where improving one objective inevitably degrades another.</figcaption>
+  </figure>
+</section>
+
+
+
+<hr class="divider">
+
+<section id="generalization">
+  <div class="kicker">Does it transfer?</div>
+  <h2>Training on the easy map vs. training on the hardest one</h2>
+  <p class="lede">Every model above was trained from scratch on one scenario. So we ask: does a policy trained on <em>one</em> difficulty hold up on the other three it's never seen? We investigate on this matter with two checkpoint models &mdash; one trained only on Easy, one trained only on Expert &mdash; were each evaluated cold on all four scenarios, 100 episodes each, zero exploration.</p>
+  <figure>
+    <img src="assets/generalization_test.png" alt="Success rate and collisions for the easy-trained and expert-trained checkpoints, evaluated on all four scenarios">
+    <figcaption>Solid in-distribution performance doesn't predict what happens out of it.</figcaption>
+  </figure>
+  <p>The easy-trained policy is the better agent on its own map, but it's brittle everywhere else: success rate falls off steadily with every step up in density, and collisions climb sharply &mdash; from essentially zero on Easy to over 14 per episode on Hard and Expert. It learned a policy that works well in a nearly empty world and has no fallback once the world fills up with things to run into.</p>
+  <p>The expert-trained policy tells the opposite story. Its success rate is lower on its own training map than the easy-trained policy is on <em>its</em> training map, but that success rate barely moves across all four scenarios &mdash; it's not even highest on Expert, the map it was actually trained on. More strikingly, its collision rate stays low and comparatively flat everywhere, including on maps it never trained on. Having spent its entire training budget surrounded by obstacles and pedestrians, it strongly learnt the one skill that matters : not running into things alongside the ultimate goal of moving towards the goal. That's the same mechanism proposed earlier for why denser scenarios learn <em>faster</em> &mdash; here it shows up again as why they also generalize <em>better</em>.</p>
+</section>
+
+<hr class="divider">
+
+<section id="closing">
+  <div class="kicker">Where this leaves things</div>
+  <h2>Conclusion and Summary</h2>
+  <p class="lede">The end state is a single-robot policy that handles four densities of the same delivery task without any per-map retuning &mdash; but the more interesting output of this project is the trail of evidence behind it.</p>
+  <ul class="arrow-list">
+    <li><strong>A training run that looked completely broken turned out to be an information problem, not a model problem</strong> &mdash; the observation didn't contain enough to act on, and no amount of extra training could have fixed that.</li>
+    <li><strong>Across all seventeen exposed hyperparameters, each hyperparameter had a different effect size</strong> &mdash; three mattered dramatically, and the rest had lesser effect or were completely negligible</li>
+    <li><strong>Two hyperparameter searches told a story about optimizing for the right objective</strong> &mdash; the first found real speed gains and real instability it never measured; the second existed specifically to go back and measure what the first one missed.</li>
+    <li><strong>Harder scenarios learned faster, not slower</strong> &mdash; a near-empty map gives an agent very little to learn from, while a denser one hands it a steady stream of collisions to learn to avoid.</li>
+    <li><strong>That same density advantage carries over to generalization</strong> &mdash; a policy trained only on the hardest map held up across all four difficulties, while a policy trained only on the easiest one excelled at home and fell apart everywhere else.</li>
+  </ul>
+  <div class="callout">The full methodology, every number behind these charts, and the code for every experiment described here &mdash; including the ones that didn't work &mdash; are in the linked report and repository.</div>
+</section>
+
+</main>
+
+<footer>
+  <p>Course project for Applied Data Science and Artificial Intelligence (UMC301), IISc. Thanks to Prof. Deepak Subramani for the opportunity to work on this project.</p>
+  <p><a href="assets/report.pdf">Full report</a> &middot; <a href="https://github.com/palakraisinghani/RobotRoll">GitHub</a> &middot; MIT License</p>
+</footer>
+
+</body>
+</html>
