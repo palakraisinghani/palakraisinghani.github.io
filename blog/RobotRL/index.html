@@ -3,7 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teaching a Robot to Deliver</title>
+<script>
+  (function () {
+    var stored = localStorage.getItem("mg-theme");
+    var dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (dark) document.documentElement.setAttribute("data-theme", "dark");
+  })();
+</script>
+<title>A Robot comes to Life with Reinforcement Learning - Palak</title>
+<link rel="stylesheet" href="../../css/global.css">
+<link rel="stylesheet" href="../../css/blog.css">
 <style>
   :root {
     --bg: #fbfaf8;
@@ -469,19 +478,18 @@
 </head>
 <body>
 
-<header class="hero">
-  <div class="wrap">
-    <h1>A Robot comes to Life with Reinforcement Learning</h1>
-    <p class="tagline">Learning with trial and error. Balancing Exploration and Exploitation. Acting with Foresight.</p>
-    <p class="byline">Course project &middot; Applied Data Science and Artificial Intelligence (UMC301), IISc. Fall 2026</p>
-    <div class="links">
-      <a href="assets/report.pdf">Full report (PDF)</a>
-      <a href="https://github.com/palakraisinghani/RobotRoll">Code &amp; repo</a>
-    </div>
-  </div>
-</header>
+<div id="global-header"></div>
 
 <main class="wrap">
+
+<!-- Title, date and tags are filled in automatically from js/blog-data.js -->
+<div class="blog-post-header" data-blog-id="robot-rl"></div>
+
+<p class="byline">Course project &middot; Applied Data Science and Artificial Intelligence (UMC301), IISc. Fall 2026</p>
+<div class="links">
+  <a href="assets/report.pdf">Full report (PDF)</a>
+  <a href="https://github.com/palakraisinghani/RobotRoll">Code &amp; repo</a>
+</div>
 
 <div class="intro-box">
   <div class="kicker">Starting from the start</div>
@@ -875,12 +883,17 @@
   <div class="callout">The full methodology, every number behind these charts, and the code for every experiment described here &mdash; including the ones that didn't work &mdash; are in the linked report and repository.</div>
 </section>
 
-</main>
+<p class="blog-post-footnote">Course project for Applied Data Science and Artificial Intelligence (UMC301), IISc. Thanks to Prof. Deepak Subramani for the opportunity to work on this project.</p>
 
-<footer>
-  <p>Course project for Applied Data Science and Artificial Intelligence (UMC301), IISc. Thanks to Prof. Deepak Subramani for the opportunity to work on this project.</p>
-  <p><a href="assets/report.pdf">Full report</a> &middot; <a href="https://github.com/palakraisinghani/RobotRoll">GitHub</a> &middot; MIT License</p>
-</footer>
+<!-- Previous/Next Blog links are filled in automatically based on
+     this post's position in js/blog-data.js -->
+<div id="blog-end"></div>
+</main>
+<div id="global-footer"></div>
+<script src="../../js/components.js"></script>
+<script src="../../js/blog-data.js"></script>
+<script src="../../js/blog.js"></script>
+<script src="../../js/main.js"></script>
 
 </body>
 </html>
