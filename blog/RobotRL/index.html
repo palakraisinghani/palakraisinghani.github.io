@@ -15,72 +15,17 @@
 <link rel="stylesheet" href="../../css/blog.css">
 <style>
   :root {
-    --bg: #fbfaf8;
-    --surface: #ffffff;
-    --ink: #1b1a17;
-    --ink-secondary: #4b4a45;
-    --ink-muted: #85837c;
-    --border: #e6e3db;
-    --accent: #2a78d6;
-    --accent-2: #eb6834;
-    --accent-3: #1baf7a;
+    --bg: var(--mg-cream);
+    --surface: var(--mg-card);
+    --ink: var(--mg-ink);
+    --ink-secondary: var(--mg-slate);
+    --ink-muted: var(--mg-ink-faint);
+    --border: var(--mg-line);
+    --accent: var(--mg-mauve);
+    --accent-2: var(--mg-slate);
     --radius: 10px;
-    --maxw: 820px;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #171613;
-      --surface: #201f1b;
-      --ink: #ece9e2;
-      --ink-secondary: #c4c1b8;
-      --ink-muted: #8d8b83;
-      --border: #34322c;
-      --accent: #6fa8e8;
-      --accent-2: #f2925f;
-      --accent-3: #4fd39a;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #171613;
-    --surface: #201f1b;
-    --ink: #ece9e2;
-    --ink-secondary: #c4c1b8;
-    --ink-muted: #8d8b83;
-    --border: #34322c;
-    --accent: #6fa8e8;
-    --accent-2: #f2925f;
-    --accent-3: #4fd39a;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    line-height: 1.65;
-  }
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
-  header.hero {
-    padding: 72px 20px 48px;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
-  }
-  header.hero h1 {
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-    margin: 0 0 14px;
-    letter-spacing: -0.02em;
-  }
-  header.hero p.tagline {
-    font-size: 1.15rem;
-    color: var(--ink-secondary);
-    max-width: 560px;
-    margin: 0 auto 22px;
-  }
-  header.hero p.byline {
-    font-size: 0.9rem;
-    color: var(--ink-muted);
-    margin: 0;
-  }
   .links { margin-top: 24px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
   .links a {
     font-size: 0.88rem;
@@ -93,7 +38,6 @@
   }
   .links a:hover { border-color: var(--accent); color: var(--accent); }
 
-  main { padding: 56px 20px 80px; }
   section { margin-bottom: 68px; }
   section h2 {
     font-size: 1.5rem;
@@ -252,14 +196,6 @@
 
   .divider { height: 1px; background: var(--border); border: none; margin: 0 0 56px; }
 
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 40px 20px 60px;
-    text-align: center;
-    color: var(--ink-muted);
-    font-size: 0.88rem;
-  }
-  footer a { color: var(--accent); text-decoration: none; }
 
   code {
     background: var(--surface);
@@ -480,7 +416,7 @@
 
 <div id="global-header"></div>
 
-<main class="wrap">
+<main>
 
 <!-- Title, date and tags are filled in automatically from js/blog-data.js -->
 <div class="blog-post-header" data-blog-id="robot-rl"></div>
